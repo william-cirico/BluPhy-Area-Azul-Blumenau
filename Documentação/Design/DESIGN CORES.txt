@@ -1,0 +1,101 @@
+------------------------------------------------------------------------------
+
+Fonte = Source Sans Pro
+
+------------------------------------------------------------------------------
+
+LOGIN:
+Fundo com 3 cores em onda:
+	Cor 1 = #406ae2
+	Cor 2 = #4682b4
+	Cor 3 = #006696
+
+Caixa de preenchimento login/senha = #ffffff
+Cor fonte da caixa de preenchimento = #000000
+
+Botão login = #508cff
+Cor fonte do botão login = #ffffff
+
+Cor logar com google = #ff1e1e
+Cor fonte de logar com google = #ffffff
+
+Cor fonte de botão de cadastro = #000000
+
+------------------------------------------------------------------------------
+
+CADASTRO DE USUÁRIO:
+Fundo: #dcdcdc
+
+Cor de formulários para preencher = #ffffff
+Cor da fonte de formulários = #000000
+
+Cor botão de cadastre-se = #508cff
+Fonte da cor do botão cadastre-se = #ffffff
+
+------------------------------------------------------------------------------
+
+CADASTRO DE VEÍCULO:
+Fundo: #dcdcdc
+
+Cor de formulários para preencher = #ffffff
+Cor da fonte de formulários = #000000
+
+Cor botão tipo de veículo = #d2d2d2
+Cor fonte do botão tipo de veículo = #ffffff
+
+Cor botão cadastrar veículo = #508cff
+Cor fonte do botão cadastrar veículo = #ffffff
+
+
+------------------------------------------------------------------------------
+
+TELA PRINCIPAL:
+Fundo: #dcdcdc
+
+Cor do círculo mostrando dinheiro = (sujestão entre azul e preto)
+Cor fonte do círculo mostranho dinheiro = #ffffff
+
+Cor botão de recarga de dinheiro = #1ee10a
+Cor símbolo de cifrão no botão de recarga = #ffffff
+
+Cor caixas mostranho veículos = #ffffff
+Cor fonte das caixas de veículos = #000000
+
+Cor botão de estacionar = #508cff
+Cor fonte de botão estacionar = #ffffff
+
+Cor botão de adicionar veículo = #000000
+Cor símbolo de mais no botão adicionar veículo = #ffffff
+
+------------------------------------------------------------------------------
+
+TELA PRINCIPAL - MENU:
+Fundo: #dcdcdc
+
+Cor cabeçalho mostranho nome = #ffffff
+Cor fonte do cabeçalho de nome = #000000
+
+Cor botões = #ffffff
+Cor fonte dos botões = #000000
+
+Cor botão de editar = #e1e100
+Cor icone de lápis em botão editar = #000000
+
+Cor botão excluir = #e11400
+Cor do X = #ffffff
+
+Cor botão sair = #a0a0a0
+Cor fonte botão sair = #000000
+
+------------------------------------------------------------------------------
+
+ESTACIONAR:
+Fundo: #dcdcdc
+
+Cor barra de contagem listrada = #000000/#323232
+Cor fonte da barra de contagem = #ffffff
+
+Cor botão de estacionar = #000000
+Cor fonte de botão estacionar = ##ffffff
+
+------------------------------------------------------------------------------
