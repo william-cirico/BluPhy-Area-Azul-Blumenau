@@ -1,0 +1,12 @@
+/token -> Verificar o email e a senha fornecidos e retornar um token.
+/login -> Verificar token é válido, retornar status code sucess.
+/getSaldo -> Retornar o saldo do usuário com base no token.
+/getVeiculos -> Retornar os veiculos que aquele usuário possui.
+/addUser -> receber informações do usuário e cadastrar o usuário no banco.
+/addVeiculo -> receber informações do veículo e cadastrar o veículo no banco.
+/regarca -> receber as informações da recarga (valor, informações de pagamento).
+/editarVeiculo -> Receber as novas informações do veículo e fazer alterações no banco.
+/editarCartao -> Receber as novas informações do cartão e fazer alterações no banco.
+/addCartao -> Receber as informações do cartão e cadastrar no banco.
+/consultarReservaFuncionario -> Receber a placa do veiculo e retornar as informações da reserva (Hora inicio e hora fim) e as informações do veículo.
+/consultarReservaUsuario -> Receber a placa do veiculo e retorna info.rmações da reserva (hora inicio e hora fim).
