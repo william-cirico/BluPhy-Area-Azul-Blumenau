@@ -10,7 +10,7 @@ Receber: placa - string
 
 Devolver: status code (200/300/400)
 
-*/validarCartão
+*/validarCartao
 
 Receber: cartão_hash - string
 
@@ -125,4 +125,23 @@ Devolver: hora_inicio - date_time
 Receber: hash_usuario - string
 	 id_veiculo - int
 	 hora_inicio - date_time
+
 Devolver:hora_fim - date_time
+
+/excluirUsuario -> Receber o token do usuário e excluí-lo
+
+Receber: token_usuário - string
+
+Devolver: status code (200/300/400)
+
+/excluirVeiculo -> Receber a placa do veículo e excluí-lo
+
+Receber: placa_carro - string
+
+Devolver: status code (200/300/400)
+
+/excluirCartao -> Receber o hash do cartão e excluí-lo
+
+Receber: cartão_hash - string
+
+Devolver: status code (200/300/400)
