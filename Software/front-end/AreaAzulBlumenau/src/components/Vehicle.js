@@ -5,7 +5,7 @@ import { useState } from 'react';
 import commonStyles from '../commonStyles';
 
 export default props => {
-    [isParked, setIsParked] = useState(false)
+    [isParked, setIsParked] = useState(false);
 
     return (
         <View style={styles.container}>
@@ -14,7 +14,7 @@ export default props => {
                 <Text style={styles.carModelText}>{props.carModel}</Text>
             </View>
             <TouchableOpacity
-                style={[styles.button, isParked ? {} : {backgroundColor: commonStyles.colors.textColor, borderLeftColor: '#0a51ad'}]}
+                style={[styles.button, isParked ? {backgroundColor: '#ccc'} : {backgroundColor: commonStyles.colors.textColor, borderLeftColor: '#0a51ad'}]}
             >
                 <Text style={styles.buttonText}>{isParked ? 'ESTACIONADO' : 'ESTACIONAR'}</Text>
             </TouchableOpacity>

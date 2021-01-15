@@ -14,7 +14,7 @@ export default props => (
 );
 
 const styles = StyleSheet.create({
-    button: {
+    button: {        
         color: 'white',
         backgroundColor: commonStyles.colors.mainColor,
         padding: 15,
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: 25,
+        fontSize: 25,        
     },
 });
 

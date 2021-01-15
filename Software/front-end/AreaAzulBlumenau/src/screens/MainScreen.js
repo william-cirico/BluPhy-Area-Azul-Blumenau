@@ -1,35 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 
+import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import commonStyles from '../commonStyles';
-import Vehicle from '../components/Vehicles';
+import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 
 export default ({ navigation }) => {
-    const DATA = [
-        {
-            id_veiculo: '1',
-            placa: 'ABCD-1233',
-            modelo: 'Kwid'
-        },
-        {
-            id_veiculo: '2',
-            placa: 'ABCD-1533',
-            modelo: 'Duster'
-        },
-        {
-            id_veiculo: '3',
-            placa: 'ABAD-1233',
-            modelo: 'Captur'
-        },
-        {
-            id_veiculo: '4',
-            placa: 'ASDD-1233',
-            modelo: 'Zoe'
-        },        
-    ];
+    const requestCameraPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);        
+            console.log(granted)
+            // const granted = await PermissionsAndroid.request(
+            // PermissionsAndroid.PERMISSIONS.CAMERA,
+            // {
+            //   title: "Cool Photo App Camera Permission",
+            //   message:
+            //     "Cool Photo App needs access to your camera " +
+            //     "so you can take awesome pictures.",
+            //   buttonNeutral: "Ask Me Later",
+            //   buttonNegative: "Cancel",
+            //   buttonPositive: "OK"
+            // }
+        //   );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("You can use the camera");
+          } else {
+            console.log("Camera permission denied");
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      };
+
+    // const requestLocationPermission = async () => {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //             {
+    //                 title: 'Area Azul Permissão de Localização',
+    //                 message: 'Area Azul precisa de acesso a localização do dispositivo',
+    //                 buttonPositive: 'OK',
+    //                 buttonNegative: 'Cancelar'                
+    //             }
+    //         );
+    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //             console.log('Permissão de Localização aceita');
+    //         } else {
+    //             console.log('Permissão de localização negada');
+    //         }
+    //     } catch(e) {
+    //         console.warn(e);
+    //     }
+    // };
+
+    useEffect(() => {        
+        requestCameraPermission();        
+    }, [])
+    
+    const [vehicles, setVehicles] = useState([
+    {
+        id_veiculo: '1',
+        placa: 'ASB-1234',
+        modelo: 'Fusca'
+    },
+    {
+        id_veiculo: '2',
+        placa: 'CDE-1234',
+        modelo: 'Gol'
+    },
+    {
+        id_veiculo: '3',
+        placa: 'FGH-1234',
+        modelo: 'Golf'
+    }
+    ]);
+    const [balance, setBalance] = useState(1233.36);
 
     return (
         <View style={styles.container}>
@@ -43,7 +92,7 @@ export default ({ navigation }) => {
                 </TouchableOpacity>                                
             </View>
             <View style={styles.balanceContainer}>
-                    <Text style={styles.balanceText}>R$ 500.00</Text>
+                    <Text style={styles.balanceText}>R$ {balance.toFixed(2)}</Text>
                     <TouchableOpacity
                         style={styles.rechargeButton}
                         activeOpacity={0.9}
@@ -53,16 +102,20 @@ export default ({ navigation }) => {
                     </TouchableOpacity>
             </View>
             <View style={styles.body}>
-                <FlatList
-                    style={styles.vehicles}
-                    data={DATA}
-                    renderItem={({ item }) => <Vehicle licensePlate={item.placa} carModel={item.modelo} />} 
-                    keyExtractor={vehicle => vehicle.id_veiculo}                                   
-                />
+                {vehicles ? 
+                    <FlatList
+                        data={vehicles}
+                        renderItem={({ item }) => <Vehicle licensePlate={item.placa} carModel={item.modelo} />} 
+                        keyExtractor={item => item.id_veiculo}                                   
+                    /> :
+                    <Text style={{ textAlign: 'center', fontSize: 20 }}>Você não possui veículos cadastrados</Text>
+                }
+                
                 <Button 
                     title='Adicionar Veículo' 
                     disabled={false} 
-                    onPress={() => navigation.navigate('VehicleRegisterScreen')}
+                    // onPress={() => navigation.navigate('VehicleRegisterScreen')}
+                    onPress={requestCameraPermission}
                 />
             </View>
         </View>
@@ -95,7 +148,7 @@ const styles = StyleSheet.create({
         flex: 7,
         paddingHorizontal: 30,
         marginTop: -Dimensions.get('window').width / 4 + 50,        
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-evenly',        
     },
     balanceContainer: {
         alignSelf: 'center',
@@ -127,8 +180,5 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: -30,
         padding: 10,
-    },  
-    vehicles: {        
-        flexGrow: 0,        
     },  
 });

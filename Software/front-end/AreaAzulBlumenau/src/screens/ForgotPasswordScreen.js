@@ -1,42 +1,100 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
 import commonStyles from '../commonStyles';
 import { emailRegex } from '../regExp';
-import { shouldUseActivityState } from 'react-native-screens';
 
-export default () => {
-    // TODO: Implementar o email vindo do formulário de login    
-    const [state, setState] = useState({
+export default ({ navigation }) => {
+    const reducer = (prevState, action) => {
+        switch(action.type){
+            case 'EMAIL':
+                if (emailRegex.test(action.email)) {
+                    return {
+                        ...prevState,
+                        email: action.email,
+                        isEmailValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        email: action.email,
+                        isEmailValid: false,
+                    }
+                }
+            case 'CODE':
+                return {
+                    ...prevState,
+                    code: action.code,                    
+                }
+            case 'SEND_CODE':
+                return {
+                    ...prevState,
+                    wasCodeSent: true,                    
+                }
+            case 'VALID_CODE':
+                return {
+                    ...prevState,
+                    showInputs: true,
+                }
+            case 'PASSWORD':
+                if (action.password.trim().length >= 6) {
+                    return {
+                        ...prevState,
+                        password: action.password,
+                        isPasswordValid: true,
+                    }                
+                } else {
+                    return {
+                        ...prevState,
+                        password: action.password,
+                        isPasswordValid: false,
+                    }
+                }                
+            case 'CONFIRM_PASSWORD':
+                if (action.confirmPassword === prevState.password) {
+                    return {
+                        ...prevState,
+                        confirmPassword: action.confirmPassword,
+                        isConfirmPasswordValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        confirmPassword: action.confirmPassword,
+                        isConfirmPasswordValid: false,
+                    }
+                }                            
+        }
+            
+    };
+
+    const initialState = {
         email: '',
         isEmailValid: false,
         code: '',
         wasCodeSent: false,
         showInputs: false,
-    });
-
-    // Validações
-    const validations = [state.isEmailValid];
-    if (state.wasCodeSent) {
-        validations.push(state.code.trim() >= 8);
-    }
-    
-    const validForm = validations.reduce((previousValue, currentValue) => previousValue && currentValue);
-
-    const handleEmailChange = text => {
-        if (emailRegex.test(text)) {
-            setState({...state, email: text, isEmailValid: true});
-        } else {
-            setState({...state, email: text, isEmailValid: false});
-        }
-        console.log(state.isEmailValid);        
+        password: '',
+        isPasswordValid: false,
+        confirmPassword: '',
+        isConfirmPasswordValid: false,
     };
 
-    const handleCodeVerifier = text => {
-        if (code === '12345678') {            
-            setState({...state, showInputs: true});
+    const [state, dispatch] = useReducer(reducer, initialState);
+            
+
+    const sendCode = () => {
+        // TODO: Implementar
+        dispatch({ type: 'SEND_CODE' })
+    }
+
+
+    const checkCode = () => {
+        // TODO: Implementar
+        if (state.code === '12345678') {            
+            dispatch({ type: 'VALID_CODE' })
         } else {
             Alert.alert('Código inválido')
         }
@@ -44,60 +102,64 @@ export default () => {
 
     const saveNewPassword = () => {
         // TODO: Integrar com a API
-    };
-    
+        navigation.navigate('SignInScreen');
+    };   
+        
+    const validForm = state.isPasswordValid && state.isConfirmPasswordValid;
 
+    if (state.showInputs) {
+        return (
+            <View style={styles.container}>                
+                <Input 
+                    onChangeText={text => dispatch({ type: 'PASSWORD', password: text })}
+                    isValid={state.isPasswordValid}
+                    placeholder='Nova senha'
+                    secureTextEntry={true}
+                />
+                <Input
+                    onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })}  
+                    isValid={state.isConfirmPasswordValid}
+                    placeholder='Confirmar nova senha'
+                    secureTextEntry={true}
+                /> 
+                <Button 
+                    title='Redefinir senha'
+                    disabled={!validForm}
+                    onPress={() => saveNewPassword()}                    
+                />
+            </View>
+        );
+    }
+    
     if (state.wasCodeSent) {        
         return (
             <View style={styles.container}>
                 <Text style={{textAlign: 'center'}}>Digite o código enviado ao seu e-mail</Text>
                 <Input 
-                    onChangeText={text => setState({...state, code: text})}
+                    onChangeText={text => dispatch({ type: 'CODE', code: text })}
                     placeholder='CÓDIGO DE VERIFICAÇÃO'
                 /> 
                 <Button 
                     title='Verificar código'
-                    validForm={validForm}
-                    disabled={!validForm}
-                    onPress={() => handleCodeVerifier()}
+                    onPress={() => checkCode()}
                 />
             </View>
         );
     }
 
-    if (state.showInputs) {
-        return (
-            <View style={styles.container}>
-                <Text style={{textAlign: 'center'}}>Digite o código enviado ao seu e-mail</Text>
-                <Input 
-                    placeholder='Nova senha'
-                />
-                <Input  
-                    placeholder='Confirmar nova senha'
-                /> 
-                <Button 
-                    title='Salvar'
-                    validForm={validForm}
-                    disabled={!validForm}
-                    onPress={() => saveNewPassword()}
-                />
-            </View>
-        );
-    }
-
+    
     return (
         <View style={styles.container}>
             <Input
-                onChangeText={text => handleEmailChange(text)} 
+                onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
                 placeholder='E-MAIL'
                 keyboardType='email-address'
                 isValid={state.isEmailValid}                
             />
             <Button 
-                title='Enviar código'
-                validForm={validForm}
-                disabled={!validForm}
-                onPress={() => setState({...state, wasCodeSent: true})}
+                title='Enviar código'                
+                disabled={!state.isEmailValid}
+                onPress={sendCode}
             />
         </View>        
     );
