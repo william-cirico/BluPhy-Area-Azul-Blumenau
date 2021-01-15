@@ -1,37 +1,37 @@
 ﻿*/validarToken - validar o token do usuário.
 
-Receber: token_usuario - string
+Receber: token_usuario - string - body
 
 Devolver: status code (200/300/400)
 
 */validarVeiculo
 
-Receber: placa - string
+Receber: placa - string - query parameters
 
 Devolver: status code (200/300/400)
 
 */validarCartao
 
-Receber: cartão_hash - string
+Receber: cartão_hash - string - body
 
 Devolver: status code (200/300/400)
 	 
 /gerarToken -> Verificar o email e a senha fornecidos e retornar um token.
 
-Receber: email - string 
-	 senha - string
+Receber: email - string - body
+	 senha - string - body
  
 Devolver: token_usuário - string 
 
 /retornarSaldo -> Retornar o saldo do usuário com base no token.
 
-Receber: token_usuário - string
+Receber: token_usuário - string - body
 
 Devolver: saldo - float
 
 /retornarVeiculos -> Retornar os veiculos que aquele usuário possui.
 
-Receber: token_usuário - string
+Receber: token_usuário - string - body
 
 Devolver: placa_veiculo - string
 	  modelo - string
@@ -39,109 +39,112 @@ Devolver: placa_veiculo - string
 
 /cadastrarUsuario -> receber informações do usuário e cadastrar o usuário no banco.
 
-Receber: nome - string
-	 email - string
-	 telefone - string
-	 senha - string
-	 numero_documento - string
-	 tipo_documento - string/enum
-	 saldo - float
+Receber: nome - string - body
+	 email - string - body
+	 telefone - string - body
+	 senha - string - body
+	 numero_documento - string - body
+	 tipo_documento - string/enum - body
+	
 
 Devolver: status code (200/300/400)
 	 
 
 /cadastrarVeiculo -> receber informações do veículo e cadastrar o veículo no banco.
 
-Receber: placa - string
-	 modelo - string
- 	 tipo_veiculo - string/enum
-	 id_usuario - int
+Receber: placa - string - body
+	 modelo - string - body
+ 	 tipo_veiculo - string/enum - body
+	 id_usuario - int - body
 
 Devolver: status code (200/300/400)	 
 
 /fazerRegarga -> receber as informações da recarga (valor, informações de pagamento).
 
-Receber: valor - float
-	 hash_cartão - string
-	 token_usuario - string
+Receber: valor - float - body
+	 hash_cartão - string - body
+	 token_usuario - string - body
 	  
 Devolver: status code (200/300/400)
 
 /editarUsuario -> Receber as novas informações do usuário e fazer alterações no banco.
 
-Receber: nome - string
-	 email - string
-	 telefone - string
-	 senha - string
-	 numero_documento - string
-	 tipo_documento - string/enum
-	 saldo - float
+Receber: id_usuario - query parameters
+	 nome - string - body
+	 email - string - body
+	 telefone - string - body
+	 senha - string - body
+	 numero_documento - string - body
+	 tipo_documento - string/enum - body
+	
 
 Devolver: status code (200/300/400)
 	 
 
 /editarVeiculo -> Receber as novas informações do veículo e fazer alterações no banco.
 
-Receber: placa - string
-	 modelo - string
-	 tipo_veiculo - string/enum
-	 id_usuario - int
+Receber: placa - string - query parameters
+	 modelo - string - body
+	 tipo_veiculo - string/enum - body
+	 id_usuario - int - body
 
 Devolver: status code (200/300/400)
 
 /editarCartao -> Receber as novas informações do cartão e fazer alterações no banco.
 
-Receber: cartão_hash - string
-	 bandeira - string
-	 ultimos_digitos - int
-	 id_usuario - int
+Receber: cartão_hash - string - body 
+	 bandeira - string - body
+	 ultimos_digitos - int - body
+	 id_usuario - int - body
 	 
 Devolver: status code (200/300/400)
 
 /cadastrarCartao -> Receber as informações do cartão e cadastrar no banco.
 
-Receber: cartão_hash - string
-	 bandeira - string
-	 ultimos_digitos - int
-	 id_usuario - int
+Receber: cartão_hash - string - body
+	 bandeira - string - body
+	 ultimos_digitos - int - body
+	 id_usuario - int - body
 	 
 Devolver: status code (200/300/400)
 
 /consultarReservaFuncionario -> Receber a placa do veiculo e retornar as informações da reserva (Hora inicio e hora fim) e as informações do veículo.
 
-Receber: placa_veiculo - string
+Receber: placa_veiculo - string - query parameters
 
 Devolver: hora_inicio - date_time
 	  hora_fim - date_time
 
 /consultarReservaUsuario -> Receber a placa do veiculo e retorna informações da reserva (hora inicio e hora fim).
 
-Receber: placa_veiculo - string
+Receber: placa_veiculo - string - query parameters
 
 Devolver: hora_inicio - date_time
 	  hora_fim - date_time
 
 /reservarVaga -. receber os dados do user e do veiculo a ser estacionado
-Receber: hash_usuario - string
-	 id_veiculo - int
-	 hora_inicio - date_time
+Receber: hash_usuario - string - body
+	 id_veiculo - intquery parameters
+	 hora_inicio - date_time - query parameters
 
 Devolver:hora_fim - date_time
 
 /excluirUsuario -> Receber o token do usuário e excluí-lo
 
-Receber: token_usuário - string
+Receber: token_usuário - string - body
 
 Devolver: status code (200/300/400)
 
 /excluirVeiculo -> Receber a placa do veículo e excluí-lo
 
-Receber: placa_carro - string
+Receber: placa_carro - string - query parameters
 
 Devolver: status code (200/300/400)
 
 /excluirCartao -> Receber o hash do cartão e excluí-lo
 
-Receber: cartão_hash - string
+Receber: cartão_hash - string - body
 
 Devolver: status code (200/300/400)
+
+/recuperarSenha ->
