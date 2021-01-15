@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
                 dispatch({ type: 'RESTORE_DATA', token: userToken, 'user': userData })
             } catch(e) {
                 console.log(e);
-            }            
+            }       
         }
 
         loadStorageData();
