@@ -2,58 +2,90 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+
 import commonStyles from '../commonStyles';
 
 export default props => {
+    [isLeftButtonShown, setIsLeftButtonShown] = useState(false);
     [isParked, setIsParked] = useState(false);
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.vehicleInfo}>
-                <Text style={styles.licensePlateText}>{props.licensePlate}</Text>
-                <Text style={styles.carModelText}>{props.carModel}</Text>
-            </View>
+    const getLeftContent = () => {        
+        return (
             <TouchableOpacity
-                style={[styles.button, isParked ? {backgroundColor: '#ccc'} : {backgroundColor: commonStyles.colors.textColor, borderLeftColor: '#0a51ad'}]}
+                onPress={() => console.log('teste')} 
+                style={styles.left}   
             >
-                <Text style={styles.buttonText}>{isParked ? 'ESTACIONADO' : 'ESTACIONAR'}</Text>
+                <Icon 
+                    name='trash'
+                    size={20}
+                    color='white'
+                />
             </TouchableOpacity>
-        </View>
+        );        
+    };
+
+    return (  
+        <View style={styles.container}>
+            <Swipeable                
+                renderLeftActions={getLeftContent}          
+            >
+                <View style={styles.innerContainer}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.licensePlateText}>{props.licensePlate}</Text>
+                        <Text style={styles.carModelText}>{props.carModel}</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.button}
+                    >
+                        <Text style={styles.buttonText}>{isParked ? 'ESTACIONADO' : 'ESTACIONAR'}</Text>
+                    </TouchableOpacity>                
+                </View>
+            </Swipeable> 
+        </View>   
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginBottom: 10,
+    container: {        
         backgroundColor: 'white',
+        marginBottom: 10,   
+        borderRadius: 10,
         borderLeftWidth: 15,
-        borderRadius: 15,
-        flexDirection: 'row',
-        borderLeftColor: commonStyles.colors.textColor,
+        borderLeftColor: commonStyles.colors.textColor,            
     },
-    vehicleInfo: {
-        flex: 3,
+    innerContainer: {
+        flexDirection: 'row',
+    },
+    left: {     
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: 'red',
+    },
+    textContainer: {
+        flex: 2,                   
         justifyContent: 'center',
         alignItems: 'center',
     },
-    button : {
-        flex: 2,
-        paddingVertical: 20,   
-        borderRadius: 15,  
-        justifyContent: 'center',
-        alignItems: 'center',          
-    },
-    buttonText: {
-        color: 'white', 
-        fontWeight: 'bold',
-    },
     licensePlateText: {
-        color: commonStyles.colors.textColor,
         fontWeight: 'bold',
-        fontSize: 20
-    },
+        fontSize: 20,
+        color: commonStyles.colors.textColor,
+    },  
     carModelText: {
         color: commonStyles.colors.textColor,
-        fontSize: 20,        
+        fontSize: 18,        
     },
+    button: {
+        flex: 1,
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: commonStyles.colors.textColor,        
+    },
+    buttonText: {
+        color: 'white',
+        textAlign: 'center'
+    }
 });

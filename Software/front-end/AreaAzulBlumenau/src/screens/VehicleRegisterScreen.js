@@ -147,7 +147,7 @@ export default ({ navigation }) => {
                     placeholder=''
                 />
             </View> 
-            <View style={styles.buttonContainer}>
+            <View style={styles.containerButton}>
                 <Button                               
                     title='Cadastrar Veículo'
                     disabled={!validForm}
