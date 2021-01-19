@@ -27,11 +27,11 @@ export default props => {
         <View>
             <Text>Selecione o veículo que quer editar</Text>
             <FlatList
-                    style={styles.vehicles}
-                    data={DATA}
-                    renderItem={({ item }) => <Vehicle licensePlate={item.placa} carModel={item.modelo} />} 
-                    keyExtractor={item => item.id_veiculo}                                   
-                />
+                style={styles.vehicles}
+                data={DATA}
+                renderItem={({ item }) => <Vehicle licensePlate={item.placa} carModel={item.modelo} />} 
+                keyExtractor={item => item.id_veiculo}                                   
+            />
         </View>        
     );
 }

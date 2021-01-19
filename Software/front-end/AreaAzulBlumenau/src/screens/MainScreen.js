@@ -1,83 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { PermissionsAndroid } from 'react-native';
 
-import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import commonStyles from '../commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 
-export default ({ navigation }) => {
-    const requestCameraPermission = async () => {
-        try {
-            const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);        
-            console.log(granted)
-            // const granted = await PermissionsAndroid.request(
-            // PermissionsAndroid.PERMISSIONS.CAMERA,
-            // {
-            //   title: "Cool Photo App Camera Permission",
-            //   message:
-            //     "Cool Photo App needs access to your camera " +
-            //     "so you can take awesome pictures.",
-            //   buttonNeutral: "Ask Me Later",
-            //   buttonNegative: "Cancel",
-            //   buttonPositive: "OK"
-            // }
-        //   );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("You can use the camera");
-          } else {
-            console.log("Camera permission denied");
-          }
-        } catch (err) {
-          console.warn(err);
-        }
-      };
-
-    // const requestLocationPermission = async () => {
-    //     try {
-    //         const granted = await PermissionsAndroid.request(
-    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    //             {
-    //                 title: 'Area Azul Permissão de Localização',
-    //                 message: 'Area Azul precisa de acesso a localização do dispositivo',
-    //                 buttonPositive: 'OK',
-    //                 buttonNegative: 'Cancelar'                
-    //             }
-    //         );
-    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //             console.log('Permissão de Localização aceita');
-    //         } else {
-    //             console.log('Permissão de localização negada');
-    //         }
-    //     } catch(e) {
-    //         console.warn(e);
-    //     }
-    // };
-
-    useEffect(() => {        
-        requestCameraPermission();        
-    }, [])
-    
+export default ({ navigation }) => {    
     const [vehicles, setVehicles] = useState([
-    {
-        id_veiculo: '1',
-        placa: 'ASB-1234',
-        modelo: 'Fusca'
-    },
-    {
-        id_veiculo: '2',
-        placa: 'CDE-1234',
-        modelo: 'Gol'
-    },
-    {
-        id_veiculo: '3',
-        placa: 'FGH-1234',
-        modelo: 'Golf'
-    }
+        {
+            id_veiculo: '1',
+            placa: 'ASB-1234',
+            modelo: 'Fusca'
+        },
+        {
+            id_veiculo: '2',
+            placa: 'CDE-1234',
+            modelo: 'Gol'
+        },
+        {
+            id_veiculo: '3',
+            placa: 'FGH-1234',
+            modelo: 'Golf'
+        }
     ]);
+
     const [balance, setBalance] = useState(1233.36);
 
     return (
@@ -112,10 +60,9 @@ export default ({ navigation }) => {
                 }
                 
                 <Button 
-                    title='Adicionar Veículo' 
-                    disabled={false} 
-                    // onPress={() => navigation.navigate('VehicleRegisterScreen')}
-                    onPress={requestCameraPermission}
+                    title='Adicionar Veículo'
+                    disabled={false}
+                    onPress={() => navigation.navigate('VehicleRegisterScreen')}                    
                 />
             </View>
         </View>
