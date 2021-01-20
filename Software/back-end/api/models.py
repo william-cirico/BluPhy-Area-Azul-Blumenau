@@ -1,19 +1,20 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime, Enum
 from sqlalchemy.orm import relationship
 
 from .database import Base
+from .schemas import Tipo_Documento, Tipo_Veiculo
 
 
 class Usuario(Base):
     __tablename__ = "usuarios"
 
     id_usuario = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, index=True)
+    nome = Column(String)
     email = Column(String, unique=True, index=True)
     telefone = Column(String, unique=True)
     hashed_senha = Column(String)
     numero_documento = Column(String, unique=True)
-    tipo_documento = Column(String, unique=True)
+    tipo_documento = Column(Enum(Tipo_Documento))
     saldo = Column(Float, default=0.00)
 
     veiculo = relationship("Veiculo", back_populates="dono")
@@ -27,7 +28,7 @@ class Veiculo(Base):
     id_veiculo = Column(Integer, primary_key=True, index=True)
     placa = Column(String, unique=True, index=True)
     modelo = Column(String)
-    tipo_veiculo = Column(String)
+    tipo_veiculo = Column(Enum(Tipo_Veiculo))
     id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
 
     dono = relationship("Usuario", back_populates="veiculo")
@@ -50,8 +51,7 @@ class Recarga(Base):
     data = Column(DateTime)
     valor = Column(Float)
     quantidade_horas = Column(Integer)
-    status_pagamento = Column(Boolean)
-    tipo_veiculo = Column(String)
+    status_pagamento = Column(Boolean)    
     tipo_pagamento = Column(String)
     id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
 
@@ -62,8 +62,7 @@ class Recarga(Base):
 class Boleto(Base):
     __tablename__ = "boletos"
     id_boleto = Column(Integer, primary_key=True, index=True)
-    codigo_barras = Column(String, unique=True)
-    data_vencimento = Column(DateTime)
+    link_boleto = Column(String)
     id_recarga = Column(Integer, ForeignKey("recargas.id_recarga"))
 
     recarga = relationship("Recarga", back_populates="boleto")
@@ -83,6 +82,6 @@ class Cartao(Base):
 class Funcionario(Base):
     __tablename__ = "funcionarios"
     id_funcionario = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, index=True)
+    nome = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_senha = Column(String)
