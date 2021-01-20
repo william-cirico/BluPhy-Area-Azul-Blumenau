@@ -84,7 +84,7 @@ export default ({ navigation }) => {
                 />
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('ForgotPassword')
+                        navigation.navigate('ForgotPasswordScreen')
                     }}
                 >
                     <Text style={[styles.text, {fontWeight: 'bold'}]}>Esqueceu a senha?</Text>
