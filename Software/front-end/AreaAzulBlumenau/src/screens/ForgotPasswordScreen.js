@@ -1,6 +1,8 @@
 import React, { useReducer } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
+import axios from 'axios';
+
 import Input from '../components/Input';
 import Button from '../components/Button';
 import commonStyles from '../commonStyles';
@@ -31,7 +33,8 @@ export default ({ navigation }) => {
             case 'SEND_CODE':
                 return {
                     ...prevState,
-                    wasCodeSent: true,                    
+                    wasCodeSent: true,   
+                    verification_code: action.verificationCode,                 
                 }
             case 'VALID_CODE':
                 return {
@@ -74,6 +77,7 @@ export default ({ navigation }) => {
         email: '',
         isEmailValid: false,
         code: '',
+        verificationCode: '',
         wasCodeSent: false,
         showInputs: false,
         password: '',
@@ -86,9 +90,15 @@ export default ({ navigation }) => {
             
 
     const sendCode = () => {
-        // TODO: Implementar
-        dispatch({ type: 'SEND_CODE' })
-    }
+        try {
+            axios.get('localhost:8000')
+                .then(function(response){
+                    console.log(response)
+                });            
+        } catch(e) {
+            console.log(e);
+        }        
+    };
 
 
     const checkCode = () => {

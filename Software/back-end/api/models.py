@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, Datetime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -14,7 +14,7 @@ class Usuario(Base):
     hashed_senha = Column(String)
     numero_documento = Column(String, unique=True)
     tipo_documento = Column(String, unique=True)
-    saldo = Column(Float, default = 0.00)
+    saldo = Column(Float, default=0.00)
 
     veiculo = relationship("Veiculo", back_populates="dono")
     recarga = relationship("Recarga", back_populates="usuario")
@@ -47,7 +47,7 @@ class Reserva(Base):
 class Recarga(Base):
     __tablename__ = "recargas"
     id_recarga = Column(Integer, primary_key=True, index=True)
-    data = Column(Datetime)
+    data = Column(DateTime)
     valor = Column(Float)
     quantidade_horas = Column(Integer)
     status_pagamento = Column(Boolean)
@@ -63,7 +63,7 @@ class Boleto(Base):
     __tablename__ = "boletos"
     id_boleto = Column(Integer, primary_key=True, index=True)
     codigo_barras = Column(String, unique=True)
-    data_vencimento = Column(Datetime)
+    data_vencimento = Column(DateTime)
     id_recarga = Column(Integer, ForeignKey("recargas.id_recarga"))
 
     recarga = relationship("Recarga", back_populates="boleto")
