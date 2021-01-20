@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import crud, models, schemas
+from . import models
 from .database import engine
 from .routers import users
 
@@ -14,7 +14,7 @@ origins = [
     "http://localhost:8081",
     "http://localhost:8080",
     "http://localhost:59845",
-    "http://10.0.2.2:8081"
+    "http://10.0.2.2:8081",
 ]
 
 app.add_middleware(
