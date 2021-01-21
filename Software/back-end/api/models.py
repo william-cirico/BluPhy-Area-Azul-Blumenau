@@ -40,6 +40,7 @@ class Reserva(Base):
     id_reserva = Column(Integer, primary_key=True, index=True)
     hora_inicio = Column(Time)
     hora_fim = Column(Time)
+    localização = Column(String)
     id_veiculo = Column(Integer, ForeignKey("veiculos.id_veiculo"))
 
     veiculo = relationship("Veiculo", back_populates="reserva")
@@ -50,7 +51,6 @@ class Recarga(Base):
     id_recarga = Column(Integer, primary_key=True, index=True)
     data = Column(DateTime)
     valor = Column(Float)
-    quantidade_horas = Column(Integer)
     status_pagamento = Column(Boolean)    
     tipo_pagamento = Column(String)
     id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
