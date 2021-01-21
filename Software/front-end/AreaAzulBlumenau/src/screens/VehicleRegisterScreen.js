@@ -6,8 +6,8 @@ import Motorcyle from 'react-native-vector-icons/MaterialIcons';
 
 import LabelInput from '../components/LabelInput';
 import Button from '../components/Button';
-import commonStyles from '../commonStyles';
-import { licensePlateRegex } from '../regExp';
+import commonStyles from '../theme/commonStyles';
+import { licensePlateRegex } from '../utils/regExp';
 
 export default ({ navigation }) => {    
     const reducer = (prevState, action) => {        

@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.get('/recuperarSenha/{email}')
+@router.get('/send-password-verification-code/{email}')
 async def recuperar_senha(email: str, db: Session = Depends(get_db)):
     if not get_user_by_email(db, email):
         raise HTTPException(status_code=404, detail="E-mail não cadastrado")
@@ -37,4 +37,4 @@ async def recuperar_senha(email: str, db: Session = Depends(get_db)):
         server.login(settings.admin_email, settings.admin_email_password)
         server.send_message(email_msg)
 
-    return {'verifier_code': verification_code}
+    return {"verification_code": verification_code}

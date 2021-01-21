@@ -3,7 +3,7 @@ import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from '
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 

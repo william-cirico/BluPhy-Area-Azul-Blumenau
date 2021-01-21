@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 export default props => {
     [isLeftButtonShown, setIsLeftButtonShown] = useState(false);

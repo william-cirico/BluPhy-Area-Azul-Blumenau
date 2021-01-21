@@ -11,7 +11,7 @@ import RechargeScreen from '../screens/RechargeScreen';
 import ParkScreen from '../screens/ParkScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import DrawerMenu from '../screens/DrawerMenu';
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 const MenuDrawer = createDrawerNavigator();
 const AppStack = createStackNavigator();

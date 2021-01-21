@@ -5,8 +5,9 @@ import axios from 'axios';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
-import commonStyles from '../commonStyles';
-import { emailRegex } from '../regExp';
+import commonStyles from '../theme/commonStyles';
+import { emailRegex } from '../utils/regExp';
+import { server, showErrorMessage } from '../utils/common';
 
 export default ({ navigation }) => {
     const reducer = (prevState, action) => {
@@ -88,18 +89,18 @@ export default ({ navigation }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
             
-
-    const sendCode = () => {
-        try {
-            axios.get('localhost:8000')
-                .then(function(response){
-                    console.log(response)
-                });            
+    const sendCode = async () => {
+        try {            
+            const response = await axios.get(
+                `${server}/users/send-password-verification-code/${state.email}`
+            );
+            const json = await response.json();
+            console.log(json);   
         } catch(e) {
-            console.log(e);
+            showErrorMessage(e);
+            
         }        
     };
-
 
     const checkCode = () => {
         // TODO: Implementar
