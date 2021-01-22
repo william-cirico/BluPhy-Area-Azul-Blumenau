@@ -32,7 +32,7 @@ const MainScreenDrawer = ({ navigation }) => (
 
 export default ({ navigation }) => (
         <AppStack.Navigator
-            initialRouteName='RechargeScreen'
+            initialRouteName='CardEditScreen'
             screenOptions={commonStyles.screenOptionsLayout}
         >
             <AppStack.Screen 
@@ -64,7 +64,7 @@ export default ({ navigation }) => (
             <AppStack.Screen 
                 name='CardEditScreen' 
                 component={CardEditScreen}
-                options={{ title: 'Editar Cartões' }}
+                options={{ title: 'Editar Cartão' }}
             />
         </AppStack.Navigator>
 );

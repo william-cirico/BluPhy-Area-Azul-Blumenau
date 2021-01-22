@@ -7,7 +7,7 @@ import commonStyles from '../theme/commonStyles';
 
 export default props => {    
     return (
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer, props.style]}>
         <TextInput {...props} style={styles.input} />
         {props.isValid &&             
             <Icon 

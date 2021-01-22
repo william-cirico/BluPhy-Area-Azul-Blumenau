@@ -8,6 +8,8 @@ target 'AreaAzulBlumenau' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNJuno', :path => '../node_modules/react-native-juno'
+
   target 'AreaAzulBlumenauTests' do
     inherit! :complete
     # Pods for testing
