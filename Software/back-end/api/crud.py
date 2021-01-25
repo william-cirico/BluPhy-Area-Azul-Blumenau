@@ -58,6 +58,13 @@ def create_parking_ticket(
     return db_parking_ticket
 
 
+def create_traffic_warden(
+    db: Session,
+    traffic_warden: schemas.TrafficWardenCreate
+):
+    pass
+
+
 def update_user(db: Session, user: schemas.UserUpdate, user_id):
     db.query(models.User)\
         .filter(models.User.user_id == user_id)\
@@ -101,6 +108,10 @@ def get_user_by_cpf(db: Session, document_number: str):
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_traffic_warden_by_email(db: Session, email: str):
+    return db.query(models.TrafficWarden).filter(models.TrafficWarden.email == email).first()
 
 
 def delete_vehicle(db: Session, vehicle_id: int):
