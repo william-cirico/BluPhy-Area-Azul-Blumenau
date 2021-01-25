@@ -107,7 +107,7 @@ class Billet(BilletBase):
         orm_mode = True
 
 
-class TrafficWardenBase(UserBase):
+class TrafficWardenBase(BaseModel):
     name: str
     email: str
 

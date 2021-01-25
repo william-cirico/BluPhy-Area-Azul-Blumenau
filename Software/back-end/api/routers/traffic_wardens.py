@@ -7,8 +7,8 @@ from .. import schemas
 from .. import crud
 
 router = APIRouter(
-    prefix='/parking-tickets',
-    tags=['parking tickets']
+    prefix='/traffic-warden',
+    tags=['traffic wardens']
 )
 
 

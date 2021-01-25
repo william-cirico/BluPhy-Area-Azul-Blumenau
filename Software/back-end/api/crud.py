@@ -62,7 +62,16 @@ def create_traffic_warden(
     db: Session,
     traffic_warden: schemas.TrafficWardenCreate
 ):
-    pass
+    hashed_password = get_password_hash(traffic_warden.password)
+    db_traffic_warden = models.TrafficWarden(
+        name=traffic_warden.name,
+        email=traffic_warden.email,
+        password=hashed_password,
+    )
+    db.add(db_traffic_warden)
+    db.commit()
+    db.refresh(db_traffic_warden)
+    return db_traffic_warden
 
 
 def update_user(db: Session, user: schemas.UserUpdate, user_id):

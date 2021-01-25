@@ -31,9 +31,9 @@ def authenticate_traffic_warden(email: str, password: str, db: Session):
     traffic_warden = crud.get_traffic_warden_by_email(db, email)
     if not traffic_warden:
         return False
-    if not utils.verify_password(password, user.password):
+    if not utils.verify_password(password, traffic_warden.password):
         return False
-    return user
+    return traffic_warden
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
