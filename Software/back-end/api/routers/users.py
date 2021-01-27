@@ -3,7 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Security
 from sqlalchemy.orm import Session
 
 from ..config import settings
@@ -31,7 +31,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.get('/balance')
 async def get_balance(
-        user: schemas.User = Depends(get_current_user)
+        user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
     return {'balance': user.balance}
 
@@ -41,13 +41,19 @@ async def send_verification_code(email: str, db: Session = Depends(get_db)):
     if not crud.get_user_by_email(db, email):
         raise HTTPException(status_code=404, detail="E-mail não cadastrado")
 
+    verification_code = str(randint(1000, 9999))
+
+    requisition = crud.get_password_redefine_requisition(db, email)
+
+    if requisition:
+        crud.delete_password_redefine_requisition(db, email)
+
+    crud.create_password_redefine_requisition(db, email, verification_code)
+
     email_msg = MIMEMultipart()
     email_msg['From'] = settings.admin_email
     email_msg['To'] = email
     email_msg['Subject'] = 'Bluphy - Area Azul | Código de verificação'
-
-    verification_code = str(randint(1000, 9999))
-
     msg = f'Seu código de verificação é: {verification_code}'
     email_msg.attach(MIMEText(msg))
 
@@ -61,12 +67,24 @@ async def send_verification_code(email: str, db: Session = Depends(get_db)):
 
 
 @router.put('/change-password/{email}')
-async def change_password(email: str, body: schemas.ChangePassword, db: Session = Depends(get_db)):
+async def change_password(
+        email: str,
+        body: schemas.ChangePassword,
+        db: Session = Depends(get_db)
+):
     if not crud.get_user_by_email(db, email):
         raise HTTPException(status_code=404, detail="E-mail não cadastrado")
 
-    new_password_hashed = get_password_hash(body.new_password)
-    crud.update_user_password(db, email, new_password_hashed)
+    requisition = crud.get_password_redefine_requisition(db, email)
+
+    if not requisition:
+        raise HTTPException(404, detail="Nenhuma requisição de código de verificação registrada")
+
+    if requisition.verification_code != body.verification_code:
+        raise HTTPException(400, detail="Código de verificação incorreto")
+
+    crud.update_user_password(db, email, body.new_password)
+    crud.delete_password_redefine_requisition(db, email)
 
     return {'message': 'Senha alterada com sucesso!'}
 
@@ -75,7 +93,10 @@ async def change_password(email: str, body: schemas.ChangePassword, db: Session 
 async def update_user(
         user: schemas.UserUpdate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
     crud.update_user(db, user, current_user.user_id)
     return crud.get_user_by_email(db, current_user.email)
+
+
+

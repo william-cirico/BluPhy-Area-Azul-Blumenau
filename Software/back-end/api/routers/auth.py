@@ -36,6 +36,15 @@ def authenticate_traffic_warden(email: str, password: str, db: Session):
     return traffic_warden
 
 
+def authenticate_admin(email: str, password: str, db: Session):
+    admin = crud.get_admin_by_email(db, email)
+    if not admin:
+        return False
+    if not utils.verify_password(password, admin.password):
+        return False
+    return admin
+
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -47,40 +56,35 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-@router.post("/user-login", response_model=schemas.Token)
-async def user_login(
+@router.post("/login", response_model=schemas.Token)
+async def login_for_access_token(
         form_data: OAuth2PasswordRequestForm = Depends(),
         db: Session = Depends(dependencies.get_db)
 ):
-    user = authenticate_user(form_data.username, form_data.password, db)
-    if not user:
+    roles_dict = {
+        'user': authenticate_user,
+        'traffic_warden': authenticate_traffic_warden,
+        'admin': authenticate_admin,
+    }
+
+    access_token_expires = timedelta(hours=settings.access_token_expire_hours)
+    current_user = None
+
+    for role, authenticate_function in roles_dict.items():
+        if role in form_data.scopes:
+            current_user = authenticate_function(form_data.username, form_data.password, db)
+            break
+
+    if not current_user:
         raise HTTPException(
             status_code=401,
             detail="Email ou senha inválidos",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(hours=settings.access_token_expire_hours)
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
 
-
-@router.post("/traffic-warden-login", response_model=schemas.Token)
-async def traffic_warden_login(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session = Depends(dependencies.get_db)
-):
-    traffic_warden = authenticate_traffic_warden(form_data.username, form_data.password, db)
-    if not traffic_warden:
-        raise HTTPException(
-            status_code=401,
-            detail="Email ou senha inválidos",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(hours=settings.access_token_expire_hours)
     access_token = create_access_token(
-        data={"sub": traffic_warden.email}, expires_delta=access_token_expires
+        data={"sub": current_user.email, "scopes": form_data.scopes},
+        expires_delta=access_token_expires
     )
+
     return {"access_token": access_token, "token_type": "bearer"}
-    

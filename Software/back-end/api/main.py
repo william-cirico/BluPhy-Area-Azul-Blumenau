@@ -2,7 +2,14 @@ from fastapi import FastAPI
 
 from . import models
 from .database import engine
-from .routers import users, auth, vehicles, recharges, parking_tickets, traffic_wardens
+from .routers import (
+    users, 
+    auth, 
+    vehicles,
+    recharges, 
+    parking_tickets, 
+    traffic_wardens
+)
 
 
 models.Base.metadata.create_all(bind=engine)

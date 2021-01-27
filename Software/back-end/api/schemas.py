@@ -91,6 +91,11 @@ class ParkingTicket(ParkingTicketBase):
         orm_mode = True
 
 
+class ParkingInformation(BaseModel):
+    parking_ticket: ParkingTicket
+    vehicle: Vehicle
+
+
 class BilletBase(BaseModel):
     url: str
     recharge_id: int
@@ -124,6 +129,7 @@ class TrafficWarden(TrafficWardenBase):
 
 
 class ChangePassword(BaseModel):
+    verification_code: str
     new_password: str
 
 
@@ -134,3 +140,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str
+    scopes: List[str] = []

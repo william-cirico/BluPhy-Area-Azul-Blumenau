@@ -4,14 +4,17 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
-class User(Base):
+class Person:
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
+    password = Column(String)
+
+
+class User(Person, Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    email = Column(String, unique=True, index=True)
     phone = Column(String, unique=True)
-    password = Column(String)
     document_number = Column(String)
     balance = Column(Float, default=0.00)
 
@@ -30,10 +33,12 @@ class Vehicle(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
     owner = relationship("User", back_populates="vehicles")
+    parking_ticket = relationship("ParkingTicket", back_populates="vehicle")
 
 
 class ParkingTicket(Base):
     __tablename__ = "parking_tickets"
+
     parking_ticket_id = Column(Integer, primary_key=True, index=True)
     location = Column(String)
     parking_time = Column(Integer)
@@ -42,9 +47,12 @@ class ParkingTicket(Base):
     price = Column(Float)
     vehicle_id = Column(Integer, ForeignKey("vehicles.vehicle_id"))
 
-    
+    vehicle = relationship("Vehicle", back_populates="parking_ticket")
+
+
 class Recharge(Base):
     __tablename__ = "recharges"
+
     recharge_id = Column(Integer, primary_key=True, index=True)
     date = Column(DateTime)
     value = Column(Float)
@@ -58,6 +66,7 @@ class Recharge(Base):
 
 class Billet(Base):
     __tablename__ = "billets"
+
     billet_id = Column(Integer, primary_key=True, index=True)
     billet_link = Column(String)
     recharge_id = Column(Integer, ForeignKey("recharges.recharge_id"))
@@ -65,9 +74,21 @@ class Billet(Base):
     recharge = relationship("Recharge", back_populates="billet")
 
 
-class TrafficWarden(Base):
+class TrafficWarden(Person, Base):
     __tablename__ = "traffic_wardens"
+
     traffic_warden_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+
+
+class Admin(Person, Base):
+    __tablename__ = "admins"
+
+    admin_id = Column(Integer, primary_key=True, index=True)
+
+
+class PasswordRedefineRequisition(Base):
+    __tablename__ = "password_redefine_requisitions"
+
+    password_redefine_requisition_id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    password = Column(String)
+    verification_code = Column(String)

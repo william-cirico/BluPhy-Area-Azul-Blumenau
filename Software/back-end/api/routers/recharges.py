@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Security
 from sqlalchemy.orm import Session
 
 from ..dependencies import get_db, get_current_user
@@ -15,7 +15,7 @@ router = APIRouter(
 async def create_recharge(
         recharge: schemas.RechargeCreate,
         db: Session = Depends(get_db),
-        user: schemas.User = Depends(get_current_user)
+        user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
     """
     Criar um registro de recarga no banco
