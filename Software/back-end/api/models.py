@@ -1,88 +1,94 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime, Enum
 from sqlalchemy.orm import relationship
 
 from .database import Base
 
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
-
-    id_usuario = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, index=True)
+class Person:
+    name = Column(String)
     email = Column(String, unique=True, index=True)
-    telefone = Column(String, unique=True)
-    hashed_senha = Column(String)
-    numero_documento = Column(String, unique=True)
-    tipo_documento = Column(String, unique=True)
-    saldo = Column(Float, default=0.00)
-
-    veiculo = relationship("Veiculo", back_populates="dono")
-    recarga = relationship("Recarga", back_populates="usuario")
-    cartao = relationship("Cartao", back_populates="usuario")
+    password = Column(String)
 
 
-class Veiculo(Base):
-    __tablename__ = "veiculos"
+class User(Person, Base):
+    __tablename__ = "users"
 
-    id_veiculo = Column(Integer, primary_key=True, index=True)
-    placa = Column(String, unique=True, index=True)
-    modelo = Column(String)
-    tipo_veiculo = Column(String)
-    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
+    user_id = Column(Integer, primary_key=True, index=True)
+    phone = Column(String, unique=True)
+    document_number = Column(String)
+    balance = Column(Float, default=0.00)
 
-    dono = relationship("Usuario", back_populates="veiculo")
-    reserva = relationship("Reserva", back_populates="veiculo")
-
-
-class Reserva(Base):
-    __tablename__ = "reservas"
-    id_reserva = Column(Integer, primary_key=True, index=True)
-    hora_inicio = Column(Time)
-    hora_fim = Column(Time)
-    id_veiculo = Column(Integer, ForeignKey("veiculos.id_veiculo"))
-
-    veiculo = relationship("Veiculo", back_populates="reserva")
+    vehicles = relationship("Vehicle", back_populates="owner")
+    recharge = relationship("Recharge", back_populates="user")
 
 
-class Recarga(Base):
-    __tablename__ = "recargas"
-    id_recarga = Column(Integer, primary_key=True, index=True)
-    data = Column(DateTime)
-    valor = Column(Float)
-    quantidade_horas = Column(Integer)
-    status_pagamento = Column(Boolean)
-    tipo_veiculo = Column(String)
-    tipo_pagamento = Column(String)
-    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
+class Vehicle(Base):
+    __tablename__ = "vehicles"
 
-    usuario = relationship("Usuario", back_populates="recarga")
-    boleto = relationship("Boleto", back_populates="recarga")
+    vehicle_id = Column(Integer, primary_key=True, index=True)
+    license_plate = Column(String, index=True)
+    model = Column(String)
+    vehicle_type = Column(String)
+    is_parked = Column(Boolean, default=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
 
-
-class Boleto(Base):
-    __tablename__ = "boletos"
-    id_boleto = Column(Integer, primary_key=True, index=True)
-    codigo_barras = Column(String, unique=True)
-    data_vencimento = Column(DateTime)
-    id_recarga = Column(Integer, ForeignKey("recargas.id_recarga"))
-
-    recarga = relationship("Recarga", back_populates="boleto")
+    owner = relationship("User", back_populates="vehicles")
+    parking_ticket = relationship("ParkingTicket", back_populates="vehicle")
 
 
-class Cartao(Base):
-    __tablename__ = "cartoes"
-    id_cartao = Column(Integer, primary_key=True, index=True)
-    hashed_cartao = Column(String)
-    bandeira = Column(String)
-    ultimos_digitos = Column(Integer)
-    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario"))
+class ParkingTicket(Base):
+    __tablename__ = "parking_tickets"
 
-    usuario = relationship("Usuario", back_populates="cartao")
+    parking_ticket_id = Column(Integer, primary_key=True, index=True)
+    location = Column(String)
+    parking_time = Column(Integer)
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
+    price = Column(Float)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.vehicle_id"))
+
+    vehicle = relationship("Vehicle", back_populates="parking_ticket")
 
 
-class Funcionario(Base):
-    __tablename__ = "funcionarios"
-    id_funcionario = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, index=True)
+class Recharge(Base):
+    __tablename__ = "recharges"
+
+    recharge_id = Column(Integer, primary_key=True, index=True)
+    date = Column(DateTime)
+    value = Column(Float)
+    payment_status = Column(Boolean)
+    payment_type = Column(String)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+
+    user = relationship("User", back_populates="recharge")
+    billet = relationship("Billet", back_populates="recharge")
+
+
+class Billet(Base):
+    __tablename__ = "billets"
+
+    billet_id = Column(Integer, primary_key=True, index=True)
+    billet_link = Column(String)
+    recharge_id = Column(Integer, ForeignKey("recharges.recharge_id"))
+
+    recharge = relationship("Recharge", back_populates="billet")
+
+
+class TrafficWarden(Person, Base):
+    __tablename__ = "traffic_wardens"
+
+    traffic_warden_id = Column(Integer, primary_key=True, index=True)
+
+
+class Admin(Person, Base):
+    __tablename__ = "admins"
+
+    admin_id = Column(Integer, primary_key=True, index=True)
+
+
+class PasswordRedefineRequisition(Base):
+    __tablename__ = "password_redefine_requisitions"
+
+    password_redefine_requisition_id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    hashed_senha = Column(String)
+    verification_code = Column(String)
