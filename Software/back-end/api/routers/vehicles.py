@@ -1,9 +1,5 @@
 from typing import List
-<<<<<<< HEAD
 from fastapi import APIRouter, Depends, HTTPException, Security
-=======
-from fastapi import APIRouter, Depends, HTTPException
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 from sqlalchemy.orm import Session
 
 from .. import schemas
@@ -16,7 +12,6 @@ router = APIRouter(
 )
 
 
-<<<<<<< HEAD
 @router.get(
     '/{license_plate}',
     response_model=schemas.ParkingInformation,
@@ -45,43 +40,25 @@ def get_parked_vehicle_by_license_plate(
 @router.get('/', response_model=List[schemas.Vehicle])
 def get_vehicles(
     user: schemas.User = Security(get_current_user, scopes=["user"])
-=======
-@router.get('/', response_model=List[schemas.Vehicle])
-def get_vehicles(
-        user: schemas.User = Depends(get_current_user)
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 ):
     return user.vehicles
 
 
 @router.post('/', response_model=schemas.Vehicle)
 def create_vehicle(
-<<<<<<< HEAD
     vehicle: schemas.VehicleCreate,
     db: Session = Depends(get_db),
     user: schemas.User = Security(get_current_user, scopes=["user"])
-=======
-        vehicle: schemas.VehicleCreate,
-        db: Session = Depends(get_db),
-        user: schemas.User = Depends(get_current_user)
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 ):
     return crud.create_vehicle(db, vehicle, user.user_id)
 
 
 @router.put('/{vehicle_id}')
 def update_vehicle(
-<<<<<<< HEAD
     vehicle_id: int,
     vehicle_update: schemas.VehicleUpdate,
     db: Session = Depends(get_db),
     user: schemas.User = Security(get_current_user, scopes=["user"])
-=======
-        vehicle_id: int,
-        vehicle_update: schemas.VehicleUpdate,
-        db: Session = Depends(get_db),
-        user: schemas.User = Depends(get_current_user)
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 ):
     if user.vehicles:
         for vehicle in user.vehicles:
@@ -93,15 +70,9 @@ def update_vehicle(
 
 @router.delete('/{vehicle_id}')
 def delete_vehicle(
-<<<<<<< HEAD
     vehicle_id: int,
     db: Session = Depends(get_db),
     user: schemas.User = Security(get_current_user, scopes=["user"])
-=======
-        vehicle_id: int,
-        db: Session = Depends(get_db),
-        user: schemas.User = Depends(get_current_user)
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 ):
     if user.vehicles:
         for vehicle in user.vehicles:

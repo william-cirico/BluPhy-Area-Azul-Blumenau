@@ -38,8 +38,4 @@ urllib3==1.26.2
 uvicorn==0.13.1
 validate-docbr==1.8.2
 watchgod==0.6
-<<<<<<< HEAD
 websockets==8.1
-=======
-websockets==8.1
->>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
