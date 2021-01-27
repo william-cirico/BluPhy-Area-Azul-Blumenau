@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/drawer';
 
 import MenuItem from '../components/MenuItem';
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 
 export default ({ navigation }) => {

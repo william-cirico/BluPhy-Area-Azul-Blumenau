@@ -3,8 +3,8 @@ import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpac
 
 import Button from '../components/Button';
 import Input from '../components/Input';
-import commonStyles from '../commonStyles';
-import { emailRegex } from '../regExp';
+import commonStyles from '../theme/commonStyles';
+import { emailRegex } from '../utils/regExp';
 
 
 

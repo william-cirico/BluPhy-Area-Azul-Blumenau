@@ -26,7 +26,10 @@
       <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyBhpIPuOJ5pb-Oit_xpqb_LtTMtjlQJHbc"/>          
-      <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+      <uses-library android:name="org.apache.http.legacy" android:required="false"/>      
+      <meta-data
+        android:name="br.com.juno.directcheckout.public_token_sandbox"
+        android:value="D5C29AE7B2C9F61954032DC9DC8C7366E8CA29DD6F25D7DF3FBE4C47F3636006"/>
     </application>
 
 </manifest>

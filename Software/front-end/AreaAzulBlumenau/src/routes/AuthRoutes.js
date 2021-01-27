@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 const AuthStack = createStackNavigator();
 

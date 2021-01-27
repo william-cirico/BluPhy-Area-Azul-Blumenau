@@ -79,6 +79,3 @@ async def update_user(
 ):
     crud.update_user(db, user, current_user.user_id)
     return crud.get_user_by_email(db, current_user.email)
-
-
-

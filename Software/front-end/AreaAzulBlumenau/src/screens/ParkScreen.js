@@ -13,7 +13,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 import Button from '../components/Button';
 
 export default ({ navigation }) => {

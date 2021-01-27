@@ -42,7 +42,7 @@ class ParkingTicket(Base):
     price = Column(Float)
     vehicle_id = Column(Integer, ForeignKey("vehicles.vehicle_id"))
 
-
+    
 class Recharge(Base):
     __tablename__ = "recharges"
     recharge_id = Column(Integer, primary_key=True, index=True)
