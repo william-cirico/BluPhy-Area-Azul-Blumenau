@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 export default props => (
     <TouchableOpacity {...props} activeOpacity={0.7}>

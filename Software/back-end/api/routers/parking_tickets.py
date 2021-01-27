@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
+<<<<<<< HEAD
 from fastapi import APIRouter, Depends, HTTPException, Security
+=======
+from fastapi import APIRouter, Depends, HTTPException
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 from sqlalchemy.orm import Session
 
 from ..dependencies import get_db, get_current_user
@@ -21,16 +25,24 @@ async def create_parking_ticket(
         vehicle_id: int,
         parking_ticket: schemas.ParkingTicketCreate,
         db: Session = Depends(get_db),
+<<<<<<< HEAD
         user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
     """
     1) Verificar se o usuário possui aquele veículo.
     2) Verificar se o usuário possui algum veículo estacionado.
+=======
+        user: schemas.User = Depends(get_current_user)
+):
+    """
+    1) Verificar se o usuário possui aquele veículo.
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
     2) Verificar se o usuário tem saldo suficiente para estacionar aquele tipo de veículo.
     3) Criar o registro do ticket no banco
     4) Atualizar o saldo do usuário
     """
     current_vehicle = None
+<<<<<<< HEAD
     for vehicle in user.vehicles:
         if vehicle.vehicle_id == vehicle_id:
             current_vehicle = vehicle
@@ -45,6 +57,18 @@ async def create_parking_ticket(
                 detail="Esse usuário já possui um veículo estacionado"
             )
 
+=======
+    if user.vehicles:
+        for vehicle in user.vehicles:
+            if vehicle.vehicle_id == vehicle_id:
+                current_vehicle = vehicle
+                break
+        else:
+            raise HTTPException(status_code=404, detail="O usuário não possui esse veículo")
+    else:
+        raise HTTPException(status_code=404, detail="O usuário não possui esse veículo")
+
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
     price_per_hour = 1.5 if current_vehicle.vehicle_type == 'CARRO' else 0.75
     price = parking_ticket.parking_time * price_per_hour
 
@@ -54,6 +78,7 @@ async def create_parking_ticket(
     new_balance = user.balance - price
     crud.update_user_balance(db, new_balance, user.user_id)
 
+<<<<<<< HEAD
     crud.update_is_parked_vehicle(db, vehicle_id, True)
 
     return crud.create_parking_ticket(db, parking_ticket, price, vehicle_id)
@@ -80,4 +105,9 @@ async def cancel_parking_ticket(
     return {"message": 'Ticket cancelado'}
 
 
+=======
+    return crud.create_parking_ticket(db, parking_ticket, price, vehicle_id)
+
+
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 

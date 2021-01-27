@@ -3,11 +3,11 @@ import { StyleSheet, TextInput, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import commonStyles from '../commonStyles';
+import commonStyles from '../theme/commonStyles';
 
 export default props => {    
     return (
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer, props.style]}>
         <TextInput {...props} style={styles.input} />
         {props.isValid &&             
             <Icon 

@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Button from '../components/Button';
-import commonStyles from '../commonStyles';
-import { set } from 'react-native-reanimated';
+import commonStyles from '../theme/commonStyles';
 
 export default ({ navigation }) => {
     const [value, setValue] = useState(7.5);

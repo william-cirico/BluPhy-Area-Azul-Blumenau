@@ -3,8 +3,8 @@ import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
-import commonStyles from '../commonStyles';
-import { emailRegex, cpfCnpjRegex, phoneRegex } from '../regExp';
+import commonStyles from '../theme/commonStyles';
+import { emailRegex, cpfCnpjRegex, phoneRegex } from '../utils/regExp';
 
 
 export default () => {

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from . import models
 from .database import engine
+<<<<<<< HEAD
 from .routers import (
     users, 
     auth, 
@@ -10,6 +11,9 @@ from .routers import (
     parking_tickets, 
     traffic_wardens
 )
+=======
+from .routers import users, auth, vehicles, recharges, parking_tickets, traffic_wardens
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 
 
 models.Base.metadata.create_all(bind=engine)

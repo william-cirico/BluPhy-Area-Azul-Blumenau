@@ -1,11 +1,17 @@
 from datetime import datetime, timedelta
+<<<<<<< HEAD
 
+=======
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 from sqlalchemy.orm import Session
 
 from . import models
 from . import schemas
 from .utils import get_password_hash
+<<<<<<< HEAD
 from .database import SessionLocal
+=======
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -61,8 +67,13 @@ def create_parking_ticket(
 
 
 def create_traffic_warden(
+<<<<<<< HEAD
         db: Session,
         traffic_warden: schemas.TrafficWardenCreate
+=======
+    db: Session,
+    traffic_warden: schemas.TrafficWardenCreate
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 ):
     hashed_password = get_password_hash(traffic_warden.password)
     db_traffic_warden = models.TrafficWarden(
@@ -76,6 +87,7 @@ def create_traffic_warden(
     return db_traffic_warden
 
 
+<<<<<<< HEAD
 def create_admin(
         name: str,
         email: str,
@@ -107,6 +119,8 @@ def create_password_redefine_requisition(db: Session, email: str, verification_c
     db.refresh(db_password_redefine_requisition)
 
 
+=======
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 def update_user(db: Session, user: schemas.UserUpdate, user_id):
     db.query(models.User)\
         .filter(models.User.user_id == user_id)\
@@ -119,10 +133,16 @@ def update_user(db: Session, user: schemas.UserUpdate, user_id):
 
 
 def update_user_password(db: Session, email: str, new_password: str):
+<<<<<<< HEAD
     hashed_password = get_password_hash(new_password)
     db.query(models.User)\
         .filter(models.User.email == email)\
         .update({models.User.password: hashed_password})
+=======
+    db.query(models.User)\
+        .filter(models.User.email == email)\
+        .update({models.User.password: new_password})
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
     db.commit()
 
 
@@ -140,10 +160,15 @@ def update_vehicle(db: Session, vehicle_update: schemas.VehicleUpdate, vehicle_i
             models.Vehicle.license_plate: vehicle_update.license_plate,
             models.Vehicle.model: vehicle_update.model,
             models.Vehicle.vehicle_type: vehicle_update.vehicle_type,
+<<<<<<< HEAD
+=======
+            models.Vehicle.is_parked: vehicle_update.is_parked,
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
         })
     db.commit()
 
 
+<<<<<<< HEAD
 def update_is_parked_vehicle(db: Session, vehicle_id: int, is_parked: bool):
     db.query(models.Vehicle)\
         .filter(models.Vehicle.vehicle_id == vehicle_id)\
@@ -158,6 +183,8 @@ def update_end_time_parking_ticket(db: Session, parking_ticket_id: int):
     db.commit()
 
 
+=======
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
 def get_user_by_cpf(db: Session, document_number: str):
     return db.query(models.User).filter(models.User.document_number == document_number).first()
 
@@ -170,6 +197,7 @@ def get_traffic_warden_by_email(db: Session, email: str):
     return db.query(models.TrafficWarden).filter(models.TrafficWarden.email == email).first()
 
 
+<<<<<<< HEAD
 def get_admin_by_email(db: Session, email: str):
     return db.query(models.Admin). filter(models.Admin.email == email).first()
 
@@ -203,3 +231,8 @@ def delete_password_redefine_requisition(db, email):
         .filter(models.PasswordRedefineRequisition.email == email)\
         .delete()
     db.commit()
+=======
+def delete_vehicle(db: Session, vehicle_id: int):
+    db.query(models.Vehicle).filter(models.Vehicle.vehicle_id == vehicle_id).delete()
+    db.commit()
+>>>>>>> ffff7d25f1448e797d7f5cec993cbf0bcf51e352
