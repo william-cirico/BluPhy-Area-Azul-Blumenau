@@ -63,7 +63,7 @@ async def send_verification_code(email: str, db: Session = Depends(get_db)):
         server.login(settings.admin_email, settings.admin_email_password)
         server.send_message(email_msg)
 
-    return {"verification_code": verification_code}
+    return {"message": 'E-mail enviado'}
 
 
 @router.put('/change-password/{email}')
