@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import RNJuno from 'react-native-juno';
-
 import Input from '../components/Input';
 import Button from '../components/Button';
 
 export default props => {
     const [number, setNumber] = useState('');
-
-    RNJuno.isValidCardNumber("5362682003164890", (data) => {
-        console.log("VALID CARD NUMBER: " + data);
-    });
 
     return (
         <View style={styles.container}>
