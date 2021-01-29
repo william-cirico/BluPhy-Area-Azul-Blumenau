@@ -7,8 +7,8 @@ import React,
 } from 'react';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios'
 
-import * as auth from '../services/authServices';
 
 const AuthContext = createContext({ isLoading: false, userToken: null });
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const initialSignInState = {
         isLoading: true,
         user: null,
-        userToken: 'aaa',
+        userToken: null,
     };
     
     const signInReducer = (prevState, action) => {
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
         userToken: !!signInState.userToken,
         signIn: async data => {
             try {
-                const res = await auth.signIn(data);
+                const res = await axios;
                 const {token, user} = res;
                 
                 await AsyncStorage.setItem('@auth_Token', token);
