@@ -7,6 +7,6 @@ import AppRoutes from './routes/AppRoutes';
 
 export default () => (
     <NavigationContainer>
-        <AppRoutes />
+        <AuthRoutes />
     </NavigationContainer>
 );

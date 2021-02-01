@@ -1,7 +1,7 @@
 import React, { useContext, useReducer } from 'react';
 import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 
-import AuthContext from '../components/AuthContext';
+import { AuthContext } from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
@@ -84,7 +84,7 @@ export default () => {
                     }
                 }
             case 'CONFIRM_PASSWORD':
-                if (action.confirmPassword === prevState.password) {
+                if (action.confirmPassword === prevState.password && action.confirmPassword != '') {
                     return {
                         ...prevState,
                         confirmPassword: action.confirmPassword,
@@ -96,7 +96,7 @@ export default () => {
                         confirmPassword: action.confirmPassword,
                         isConfirmPasswordValid: false,
                     }
-                }
+                }                
         }
     };
 
@@ -112,7 +112,7 @@ export default () => {
         password: '',
         isPasswordValid: false,        
         confirmPassword: '',
-        isConfirmPasswordValid: false,
+        isConfirmPasswordValid: false,        
     }
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -121,7 +121,7 @@ export default () => {
     const validations = [
         state.isNameValid, 
         state.isEmailValid, 
-        state.isCpfCnpjValid, 
+        state.isDocumentNumberValid, 
         state.isPhoneValid,
         state.isPasswordValid,
         state.isConfirmPasswordValid,
@@ -130,10 +130,10 @@ export default () => {
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
     return (
-        <KeyboardAvoidingView 
-            style={styles.container}
-            behavior='height'                       
-        >
+        <KeyboardAvoidingView
+            behavior='padding'            
+            style={styles.container}  
+        >                        
             <Input
                 isValid={state.isNameValid}
                 onChangeText={text => dispatch({ type: 'NAME', name: text })} 
@@ -141,7 +141,7 @@ export default () => {
             />
             <Input
                 isValid={state.isEmailValid}
-                onChangeText={text => dispatch({ type: 'email', email: text })} 
+                onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
                 placeholder='E-mail'
                 keyboardType='email-address'                
             />
@@ -165,7 +165,7 @@ export default () => {
                 isValid={state.isConfirmPasswordValid}
                 onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
                 placeholder='Confirmar senha'
-                secureTextEntry={true}
+                secureTextEntry={true}         
             />
             <Button 
                 title='Cadastre-se' 
@@ -178,7 +178,7 @@ export default () => {
                     phone: state.phone,
                     password: state.password,
                 })}
-            />
+            />                    
         </KeyboardAvoidingView>
     );
 }
