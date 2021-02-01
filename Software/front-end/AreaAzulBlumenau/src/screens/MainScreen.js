@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,7 +7,7 @@ import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 
-export default ({ navigation }) => {    
+export default ({ navigation }) => {       
     const [vehicles, setVehicles] = useState([
         {
             id_veiculo: '1',
@@ -61,8 +61,7 @@ export default ({ navigation }) => {
                 
                 <Button 
                     title='Adicionar Veículo'
-                    disabled={false}
-                    onPress={() => navigation.navigate('VehicleRegisterScreen')}                    
+                    disabled={false}                             
                 />
             </View>
         </View>
