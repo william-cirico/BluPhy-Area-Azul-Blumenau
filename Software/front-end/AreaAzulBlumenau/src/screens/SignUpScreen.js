@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 
+import AuthContext from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
@@ -8,20 +9,113 @@ import { emailRegex, cpfCnpjRegex, phoneRegex } from '../utils/regExp';
 
 
 export default () => {
-    const [state, setState] = useState({
+    const { signUp } = useContext(AuthContext);
+
+    const reducer = (prevState, action) => {
+        switch (action.type) {
+            case 'NAME':
+                if (action.name.length >= 6) {
+                    return {
+                        ...prevState,
+                        name: action.name,
+                        isNameValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        name: action.name,
+                        isNameValid: false,
+                    }
+                }
+            case 'EMAIL':
+                if (emailRegex.test(action.email)) {
+                    return {
+                        ...prevState,
+                        email: action.email,
+                        isEmailValid: true,
+                    }                
+                } else {
+                    return {
+                        ...prevState,
+                        email: action.email,
+                        isEmailValid: false,
+                    }
+                }
+            case 'DOCUMENT_NUMBER':
+                if (cpfCnpjRegex.test(action.documentNumber)) {
+                    return {
+                        ...prevState,
+                        documentNumber: action.documentNumber,
+                        isDocumentNumberValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        documentNumber: action.documentNumber,
+                        isDocumentNumberValid: false,
+                    }
+                }
+            case 'PHONE':
+                if (phoneRegex.test(action.phone)) {
+                    return {
+                        ...prevState,
+                        phone: action.phone,
+                        isPhoneValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        phone: action.phone,
+                        isPhoneValid: false,
+                    }
+                }
+            case 'PASSWORD':
+                if (action.password.length >= 6) {
+                    return {
+                        ...prevState,
+                        password: action.password,
+                        isPasswordValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        password: action.password,
+                        isPasswordValid: false,
+                    }
+                }
+            case 'CONFIRM_PASSWORD':
+                if (action.confirmPassword === prevState.password) {
+                    return {
+                        ...prevState,
+                        confirmPassword: action.confirmPassword,
+                        isConfirmPasswordValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        confirmPassword: action.confirmPassword,
+                        isConfirmPasswordValid: false,
+                    }
+                }
+        }
+    };
+
+     const initialState = {
         name: '',
         isNameValid: false,
         email: '',
         isEmailValid: false,
-        cpfCnpj: '',
-        isCpfCnpjValid: false,
+        documentNumber: '',
+        isDocumentNumberValid: false,
         phone: '',
         isPhoneValid: false,
         password: '',
         isPasswordValid: false,        
         confirmPassword: '',
         isConfirmPasswordValid: false,
-    });
+    }
+
+    const [state, dispatch] = useReducer(reducer, initialState);
     
     
     const validations = [
@@ -35,54 +129,6 @@ export default () => {
     
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
-    const handleNameChange = text => {
-        if (text.trim().length >= 6) {
-            setState({...state, name: text, isNameValid: true});
-        } else {
-            setState({...state, name: text, isNameValid: false});
-        }        
-    };
-
-    const handleEmailChange = text => {
-        if (emailRegex.test(text)) {
-            setState({...state, email: text, isEmailValid: true});
-        } else {
-            setState({...state, email: text, isEmailValid: false});
-        }        
-    };
-
-    const handleCpfCnpjChange = text => {
-        if (cpfCnpjRegex.test(text)) {
-            setState({...state, cpfCnpj: text, isCpfCnpjValid: true});
-        } else {
-            setState({...state, cpfCnpj: text, isCpfCnpjValid: false});
-        }    
-    }
-
-    const handlePhoneChange = text => {
-        if (phoneRegex.test(text)) {
-            setState({...state, phone: text, isPhoneValid: true});
-        } else {
-            setState({...state, phone: text, isPhoneValid: false});
-        }    
-    }
-
-    const handlePasswordChange = text => {
-        if (text.trim().length >= 6) {
-            setState({...state, password: text, isPasswordValid: true});
-        } else {
-            setState({...state, password: text, isPasswordValid: false});
-        }
-    }
-
-    const handleConfirmPasswordChange = text => {
-        if (text === state.password) {
-            setState({...state, confirmPassword: text, isConfirmPasswordValid: true});
-        } else {
-            setState({...state, confirmPassword: text, isConfirmPasswordValid: false});
-        }
-    }
-
     return (
         <KeyboardAvoidingView 
             style={styles.container}
@@ -90,34 +136,34 @@ export default () => {
         >
             <Input
                 isValid={state.isNameValid}
-                onChangeText={text => handleNameChange(text)} 
+                onChangeText={text => dispatch({ type: 'NAME', name: text })} 
                 placeholder='Nome'
             />
             <Input
                 isValid={state.isEmailValid}
-                onChangeText={text => handleEmailChange(text)} 
+                onChangeText={text => dispatch({ type: 'email', email: text })} 
                 placeholder='E-mail'
                 keyboardType='email-address'                
             />
             <Input
                 isValid={state.isCpfCnpjValid}
-                onChangeText={text => handleCpfCnpjChange(text)} 
+                onChangeText={text => dispatch({ type: 'DOCUMENT_NUMBER', documentNumber: text })} 
                 placeholder='CPF / CNPJ'
             />
             <Input
                 isValid={state.isPhoneValid}
-                onChangeText={text => handlePhoneChange(text)}                 
+                onChangeText={text => dispatch({ type: 'PHONE', phone: text })} 
                 placeholder='Telefone'
             />
             <Input
                 isValid={state.isPasswordValid}
-                onChangeText={text => handlePasswordChange(text)} 
+                onChangeText={text => dispatch({ type: 'PASSWORD', password: text })} 
                 placeholder='Senha'
                 secureTextEntry={true}
             />
             <Input
                 isValid={state.isConfirmPasswordValid}
-                onChangeText={text => handleConfirmPasswordChange(text)} 
+                onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
                 placeholder='Confirmar senha'
                 secureTextEntry={true}
             />
@@ -125,7 +171,13 @@ export default () => {
                 title='Cadastre-se' 
                 validForm={validForm} 
                 disabled={!validForm}
-                onPress={() => console.log('clique')}
+                onPress={() => signUp({
+                    name: state.name,
+                    email: state.email,
+                    documentNumber: state.documentNumber,
+                    phone: state.phone,
+                    password: state.password,
+                })}
             />
         </KeyboardAvoidingView>
     );

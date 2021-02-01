@@ -5,17 +5,19 @@ import React,
     useMemo, 
     useReducer 
 } from 'react';
+import { Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
 
+import { server, showErrorMessage } from '../utils/common';
 
-const AuthContext = createContext({ isLoading: false, userToken: null });
 
-export const AuthProvider = ({ children }) => {
-    const initialSignInState = {
-        isLoading: true,
-        user: null,
+const AuthContext = createContext({isLoading: true, userToken: null});
+
+export const AuthProvider = ({ navigation }) => {
+    const initialState = {
+        isLoading: true,        
         userToken: null,
     };
     
@@ -24,35 +26,30 @@ export const AuthProvider = ({ children }) => {
             case 'RESTORE_DATA':
                 return {
                     ...prevState,
-                    isLoading: false,
-                    user: action.user,
+                    isLoading: false,                    
                     userToken: action.token,
                 };
             case 'SIGN_IN':
                 return {
                     ...prevState,
-                    isLoading: false,
-                    user: action.user,
+                    isLoading: false,                    
                     userToken: action.token,
                 };
             case 'SIGN_OUT':
                 return {
                     ...prevState,
-                    isLoading: false,
-                    user: null,
+                    isLoading: false,                    
                     userToken: null,
                 };
             case 'REGISTER':
                 return {
-                    ...prevState,
-                    user: action.user,
-                    userToken: action.token,
+                    ...prevState,                                        
                     isLoading: false,
                 };
         }
     };
 
-    const [signInState, dispatch] = useReducer(signInReducer, initialSignInState);
+    const [signInState, dispatch] = useReducer(signInReducer, initialState);
 
 
     useEffect(() => {        
@@ -77,34 +74,60 @@ export const AuthProvider = ({ children }) => {
         userToken: !!signInState.userToken,
         signIn: async data => {
             try {
-                const res = await axios;
-                const {token, user} = res;
+                const qs = require('qs');
+
+                const response = await axios.post(
+                    `${server}/auth/login`,
+                    qs.stringify({
+                        username: data.username,
+                        password: data.password,
+                        scope: 'user'
+                    })
+                );
+
+                const { token, tokenType } = await JSON.parse(response)
+                
                 
                 await AsyncStorage.setItem('@auth_Token', token);
-                await AsyncStorage.setItem('@user_Data', JSON.stringify(user));
+                axios.defaults.headers.common['Authorization'] = `${tokenType} ${token}`;          
 
-                dispatch({ type: 'SIGN_IN', token: token, user: user }); 
+                dispatch({ type: 'SIGN_IN', userToken: token }); 
             } catch(e) {
-                console.log(e);
+                showErrorMessage(e);
             }
         },
         signOut: async () => {
             try {
                 await AsyncStorage.removeItem('@auth_Token');
-                await AsyncStorage.removeItem('@user_Data');
-                
+                axios.defaults.headers.common['Authorization'] = '';
                 dispatch({ type: 'SIGN_OUT' });
             } catch(e) {
-                console.log(e);
+                showErrorMessage(e);
             }
         },
         signUp: async data => {
-            // Implementar
+            try {
+                response = await axios.post(
+                    `${server}/users/`,
+                    {
+                        name: data.name, 
+                        email: data.email,
+                        phone: data.phone, 
+                        document_number: data.document_number,
+                        password: data.password
+                    }
+                );
+                dispatch({ type: 'REGISTER' });
+                Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+                navigation.navigate('SignInScreen');
+            } catch(e) {
+                showErrorMessage(e);
+            }
         },
     }), []);
     
     return (            
-        <AuthContext.Provider value={authContext, {isLoading: signInState.isLoading, userToken: !!signInState.userToken}}>
+        <AuthContext.Provider value={authContext}>
             {children}
         </AuthContext.Provider>
     );

@@ -9,8 +9,7 @@ import AuthRoutes from './routes/AuthRoutes';
 
 export default () => {
 	const { isLoading, userToken } = useContext(AuthContext);
-	console.log(isLoading);
-	console.log(userToken);
+	
 	if (isLoading) {
 		return (
 			<View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
