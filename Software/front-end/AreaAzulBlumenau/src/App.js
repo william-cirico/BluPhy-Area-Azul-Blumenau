@@ -17,7 +17,7 @@ import AppRoutes from './routes/AppRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 
 
-export default ({ navigation }) => {
+export default ({ navigation }) => {    
     const initialState = {
         isLoading: true,
         isSignout: false,
@@ -105,7 +105,7 @@ export default ({ navigation }) => {
         },
 	}), []);
 	
-	if (state.isLoading) {
+	if (state.isLoading) {	
 		return (
 			<View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
 				<ActivityIndicator size="large"/>

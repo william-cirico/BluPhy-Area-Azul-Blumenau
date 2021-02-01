@@ -1,6 +1,7 @@
 import React, { useContext, useReducer } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 
+import { AuthContext } from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
