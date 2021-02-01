@@ -34,8 +34,7 @@ export default ({ navigation }) => {
             case 'SEND_CODE':
                 return {
                     ...prevState,
-                    wasCodeSent: true,   
-                    verification_code: action.verificationCode,                 
+                    wasCodeSent: true,                                  
                 }
             case 'VALID_CODE':
                 return {
@@ -90,25 +89,16 @@ export default ({ navigation }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
             
     const sendCode = async () => {
-        try {            
-            const response = await axios.get(
-                `${server}/users/send-password-verification-code/${state.email}`
-            );
-            const json = await response.json();
-            console.log(json);   
+        try {
+            await axios.post(`${server}/send-verification-code/${state.email}`);
+            dispatch({type: 'SEND_CODE'})            
         } catch(e) {
             showErrorMessage(e);
-            
-        }        
+        }       
     };
 
     const checkCode = () => {
         // TODO: Implementar
-        if (state.code === '12345678') {            
-            dispatch({ type: 'VALID_CODE' })
-        } else {
-            Alert.alert('Código inválido')
-        }
     };
 
     const saveNewPassword = () => {
