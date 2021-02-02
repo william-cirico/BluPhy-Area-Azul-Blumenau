@@ -5,7 +5,7 @@ import React,
     useMemo, 
     useReducer 
 } from 'react';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -59,9 +59,9 @@ export default () => {
     useEffect(() => {        
         const loadStorageData = async () => {            
             try {
-                const userToken = await AsyncStorage.getItem('@auth_Token');                
-
-                dispatch({ type: 'RESTORE_TOKEN', userToken: userToken })
+                const userToken = await AsyncStorage.getItem('@auth_Token');
+                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                                
+                dispatch({ type: 'RESTORE_TOKEN', userToken: userToken });
             } catch(e) {
                 console.log(e);
             }       
@@ -70,7 +70,7 @@ export default () => {
         loadStorageData();
     }, []);
 
-    const authContext = useMemo(() => ({        
+    const authContext = useMemo(() => ({           
         signIn: async data => {			            
             try {                
 				const qs = require('qs');
@@ -82,10 +82,7 @@ export default () => {
                         scope: 'user'
                     }) 
                 );                
-                console.log(response.data.access_token)
-                console.log(JSON.stringify(response.data.access_token))
-                await AsyncStorage.setItem('@auth_Token', JSON.stringify(response.data.access_token));                
-                axios.defaults.headers.common['Authorization'] = `${response.data.token_type} ${response.data.access_token}`;
+                await AsyncStorage.setItem('@auth_Token', response.data.access_token);                
                 dispatch({ type: 'SIGN_IN', userToken: response.data.access_token});                
             } catch(e) {
                 showErrorMessage(e);
@@ -99,22 +96,7 @@ export default () => {
             } catch(e) {
                 showErrorMessage(e);
             }
-        },
-        signUp: async data => {
-            try {
-                await axios.post(
-                    `${server}/users/`,
-                    {
-                        name: data.name,
-                        password: data.password,
-                        email: data.email
-                    }
-                );                                
-            } catch(e) {
-                console.log(e);
-            }
-        
-        },
+        }
 	}), []);
 	
 	if (state.isLoading) {	

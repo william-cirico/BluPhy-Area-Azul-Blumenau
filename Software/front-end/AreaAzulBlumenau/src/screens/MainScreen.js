@@ -1,32 +1,39 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
+import { server, showErrorMessage } from '../utils/common';
 import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 
 export default ({ navigation }) => {       
-    const [vehicles, setVehicles] = useState([
-        {
-            id_veiculo: '1',
-            placa: 'ASB-1234',
-            modelo: 'Fusca'
-        },
-        {
-            id_veiculo: '2',
-            placa: 'CDE-1234',
-            modelo: 'Gol'
-        },
-        {
-            id_veiculo: '3',
-            placa: 'FGH-1234',
-            modelo: 'Golf'
-        }
-    ]);
+    const [vehicles, setVehicles] = useState([]);
 
-    const [balance, setBalance] = useState(1233.36);
+    const [balance, setBalance] = useState(0);
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const loadUserBalance = async () => {
+            try {                                                              
+                balance_res = await axios(
+                    `${server}/users/balance`
+                );                
+                setBalance(balance_res.data.balance);                
+                vehiclesList = await axios(
+                    `${server}/vehicles/`
+                );                
+                setVehicles(vehiclesList.data);
+                setIsLoading(false);
+            } catch(e) {
+                showErrorMessage(e);
+            }
+        }        
+        loadUserBalance();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -40,7 +47,11 @@ export default ({ navigation }) => {
                 </TouchableOpacity>                                
             </View>
             <View style={styles.balanceContainer}>
-                    <Text style={styles.balanceText}>R$ {balance.toFixed(2)}</Text>
+                    {isLoading ? 
+                        <ActivityIndicator color={commonStyles.colors.mainColor} size='large' /> :
+                        <Text style={styles.balanceText}>R$ {balance.toFixed(2)}</Text>
+                    }
+                    
                     <TouchableOpacity
                         style={styles.rechargeButton}
                         activeOpacity={0.9}

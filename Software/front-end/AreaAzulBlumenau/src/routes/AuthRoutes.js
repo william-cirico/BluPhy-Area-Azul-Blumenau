@@ -11,7 +11,7 @@ const AuthStack = createStackNavigator();
 
 export default ({ navigation }) => (
   	<AuthStack.Navigator 
-	  	initialRouteName='ForgotPasswordScreen'
+	  	initialRouteName='SignInScreen'
 		screenOptions={commonStyles.screenOptionsLayout}
 	>
   		<AuthStack.Screen 

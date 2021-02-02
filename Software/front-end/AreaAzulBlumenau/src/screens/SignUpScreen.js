@@ -1,11 +1,14 @@
 import React, { useContext, useReducer } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 
+import axios from 'axios';
+
 import { AuthContext } from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
 import { emailRegex } from '../utils/regExp';
+import { server, showErrorMessage } from '../utils/common';
 
 
 export default ({ navigation }) => {
@@ -95,6 +98,29 @@ export default ({ navigation }) => {
     
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
+    const handleSignUp = async () => {
+        try {
+            await axios.post(
+                `${server}/users/`,
+                {
+                    name: state.name,
+                    password: state.password,
+                    email: state.email
+                }
+            );                                
+            Alert.alert(
+                'Sucesso', 
+                'Usuario criado com sucesso!',
+                [{
+                    text: 'Ok',
+                    onPress: () => navigation.navigate('SignInScreen')
+                }]
+            );  
+        } catch(e) {            
+            showErrorMessage(e);
+        }
+    };
+
     return (
         <KeyboardAvoidingView 
             style={styles.container}
@@ -127,21 +153,7 @@ export default ({ navigation }) => {
                 title='Cadastre-se' 
                 validForm={validForm} 
                 disabled={!validForm}
-                onPress={ () => {
-                    signUp({
-                        name: state.name,
-                        email: state.email,
-                        password: state.password,
-                    });
-                    Alert.alert(
-                        'Sucesso', 
-                        'Usuario criado com sucesso!',
-                        [{
-                            text: 'Ok',
-                            onPress: () => navigation.navigate('SignInScreen')
-                        }]
-                    );                    
-                }}
+                onPress={handleSignUp}
             />
         </KeyboardAvoidingView>
     );
