@@ -14,8 +14,6 @@ class User(Person, Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    phone = Column(String, unique=True)
-    document_number = Column(String)
     balance = Column(Float, default=0.00)
 
     vehicles = relationship("Vehicle", back_populates="owner")

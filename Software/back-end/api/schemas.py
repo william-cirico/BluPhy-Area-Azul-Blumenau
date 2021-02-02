@@ -47,8 +47,6 @@ class Recharge(RechargeBase):
 
 class UserBase(BaseModel):
     name: str
-    phone: str
-    document_number: str
 
 
 class UserCreate(UserBase):
