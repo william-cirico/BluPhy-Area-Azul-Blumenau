@@ -6,17 +6,19 @@ import {
     Text, 
     TouchableOpacity, 
     PermissionsAndroid, 
-    View,    
+    View,
+    Alert,    
 } from 'react-native';
 
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { server, showErrorMessage } from '../utils/common';
 import commonStyles from '../theme/commonStyles';
 import Button from '../components/Button';
 
-export default ({ navigation }) => {
+export default ({ navigation, route }) => {
     const reducer = (prevState, action) => {
         switch(action.type) {
             case 'MAP':                
@@ -82,10 +84,18 @@ export default ({ navigation }) => {
         );
     };
 
-    const confirmParking = () => {
-        // TODO: Implementar        
-        console.log(state.markerPosition.latitude);
-        // navigation.navigate('MainScreen');
+    const confirmParking = async () => {
+        try {
+            const location = `${state.markerPosition.latitude} ${state.markerPosition.longitude}`
+            await axios.post(
+                `${server}/parking-tickets/${route.params.vehicleId}`,
+                {location: location, parking_time: state.parkingTime}
+            )                       
+            Alert.alert('Sucesso', 'Veículo estacionado com sucesso!')            
+            navigation.navigate('MainScreen');
+        } catch(e) {
+            showErrorMessage(e);
+        }
     };
 
     useEffect(() => {            

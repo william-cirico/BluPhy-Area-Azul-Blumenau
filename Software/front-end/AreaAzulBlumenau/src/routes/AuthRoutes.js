@@ -11,7 +11,7 @@ const AuthStack = createStackNavigator();
 
 export default ({ navigation }) => (
   	<AuthStack.Navigator 
-	  	initialRouteName='SignInScreen'
+	  	initialRouteName='SignUpScreen'
 		screenOptions={commonStyles.screenOptionsLayout}
 	>
   		<AuthStack.Screen 

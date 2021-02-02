@@ -1,46 +1,62 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TextBase, TouchableOpacity, View } from 'react-native';
+import React, { useContext }  from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import {
-    DrawerContentScrollView, 
+    DrawerContentScrollView,
+    DrawerItem
 } from '@react-navigation/drawer';
 
-import MenuItem from '../components/MenuItem';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import commonStyles from '../theme/commonStyles';
 
 
-export default ({ navigation }) => {
-
-    const logout = () => {
-        // TODO: Implemenatar
-        console.log('Sair')
-    }
+export default props => {       
 
     return (
         <View            
             style={styles.container}
         >
-            <View style={styles.header}>
-                <Text style={styles.headerLabel}>William Círico</Text>
-            </View>  
-            <View style={styles.body}>
-                <MenuItem 
-                    iconName='car'
-                    label='Editar Veículos'
-                    onPress={() => navigation.navigate('VehicleEditScreen')}
-                />
-                <MenuItem 
-                    iconName='credit-card'
-                    label='Editar Cartões'
-                    onPress={() => navigation.navigate('CardEditScreen')}
-                />                
-            </View>           
-            <View style={styles.footer}>
-                <MenuItem 
-                    iconName='sign-out'
-                    label='Sair'
-                    onPress={logout}                        
-                />       
-            </View>
+            <DrawerContentScrollView {...props}>
+                <View style={styles.header}>
+                    <Text style={styles.headerLabel}>William Círico</Text>
+                </View>  
+                <View style={styles.body}>
+                    <DrawerItem 
+                        icon={({color, size}) => (
+                            <Icon 
+                                name='car'
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label='Editar Veículos'
+                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}}
+                    />
+                    <DrawerItem 
+                        icon={({color, size}) => (
+                            <Icon 
+                                name='user'
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label='Editar dados do usuário'
+                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}}
+                    />
+                    <View style={styles.footer}> 
+                        <DrawerItem 
+                            icon={({color, size}) => (
+                                <Icon 
+                                    name='sign-out'
+                                    color={color}
+                                    size={size}
+                                />
+                            )}
+                            label='Sair'
+                        />             
+                    </View>                                
+                </View>
+            </DrawerContentScrollView>
         </View>
     );
 }
