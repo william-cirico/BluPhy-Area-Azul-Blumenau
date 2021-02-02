@@ -3,7 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-from fastapi import APIRouter, Depends, HTTPException, Security
+from fastapi import APIRouter, Body, Depends, HTTPException, Security
 from sqlalchemy.orm import Session
 
 from ..config import settings
@@ -36,7 +36,7 @@ async def get_balance(
 @router.get('/send-verification-code/{email}')
 async def send_verification_code(email: str, db: Session = Depends(get_db)):
     if not crud.get_user_by_email(db, email):
-        raise HTTPException(status_code=404, detail="E-mail não cadastrado")
+        raise HTTPException(404, detail="E-mail não está cadastrado")
 
     verification_code = str(randint(1000, 9999))
 
@@ -60,7 +60,27 @@ async def send_verification_code(email: str, db: Session = Depends(get_db)):
         server.login(settings.admin_email, settings.admin_email_password)
         server.send_message(email_msg)
 
-    return {"message": 'E-mail enviado'}
+    return {"message": 'E-mail enviadogi'}
+
+
+@router.post('/check-verification-code/{email}')
+async def check_verification_code(
+    email: str,
+    verification_code: str = Body(..., embed=True),
+    db: Session = Depends(get_db)
+):
+    print(verification_code, email)
+
+    requisition = crud.get_password_redefine_requisition(db, email)
+    
+    if not requisition:
+        raise HTTPException(404, detail="Nenhuma requisição de código de verificação registrada")
+
+    if requisition.verification_code != verification_code:
+        raise HTTPException(400, detail="Código de verificação incorreto")
+    
+    return {'message': 'Código de verificação validado'}
+
 
 
 @router.put('/change-password/{email}')
