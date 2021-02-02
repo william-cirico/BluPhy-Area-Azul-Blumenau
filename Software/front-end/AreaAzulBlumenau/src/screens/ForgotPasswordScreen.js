@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native';
 
 import axios from 'axios';
 
@@ -35,6 +35,7 @@ export default ({ navigation }) => {
                 return {
                     ...prevState,
                     wasCodeSent: true,                                  
+                    isLoading: false,
                 }
             case 'VALID_CODE':
                 return {
@@ -68,7 +69,12 @@ export default ({ navigation }) => {
                         confirmPassword: action.confirmPassword,
                         isConfirmPasswordValid: false,
                     }
-                }                            
+                }
+            case 'LOADING':
+                return {
+                    ...prevState,
+                    isLoading: !prevState.isLoading
+                }                                     
         }
             
     };
@@ -77,36 +83,68 @@ export default ({ navigation }) => {
         email: '',
         isEmailValid: false,
         code: '',
-        verificationCode: '',
         wasCodeSent: false,
         showInputs: false,
         password: '',
         isPasswordValid: false,
         confirmPassword: '',
         isConfirmPasswordValid: false,
+        isLoading: false,
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
             
     const sendCode = async () => {
-        try {
-            await axios.post(`${server}/send-verification-code/${state.email}`);
-            dispatch({type: 'SEND_CODE'})            
+        dispatch({ type: 'LOADING' });
+        try {            
+            await axios.get(`${server}/users/send-verification-code/${state.email}`);
+            dispatch({type: 'SEND_CODE'});            
+        } catch(e) {       
+            dispatch({ type: 'LOADING' });                
+            showErrorMessage(e);
+        }                    
+    };
+
+    const checkCode = async () => {
+        try { 
+            console.log(state.verificationCode)
+            await axios.post(
+                `${server}/users/check-verification-code/${state.email}`,
+                { verification_code: state.code }
+            )
+            dispatch({ type: 'VALID_CODE' })
         } catch(e) {
             showErrorMessage(e);
-        }       
+        }
     };
 
-    const checkCode = () => {
-        // TODO: Implementar
-    };
-
-    const saveNewPassword = () => {
-        // TODO: Integrar com a API
-        navigation.navigate('SignInScreen');
+    const saveNewPassword = async () => {
+        try {
+            await axios.put(
+                `${server}/users/change-password/${state.email}`,
+                {
+                    verification_code: state.code,
+                    new_password: state.password
+                }
+            )
+            Alert.alert('Sucesso', 'Senha alterada com sucesso!', [{
+                text: 'OK',
+                onPress: () => navigation.navigate('SignInScreen')
+            }]);
+        } catch(e) {
+            showErrorMessage(e);
+        }        
     };   
         
     const validForm = state.isPasswordValid && state.isConfirmPasswordValid;
+
+    if (state.isLoading) {	
+		return (
+			<View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+				<ActivityIndicator size="large" color="black"/>
+			</View>
+		);
+	}
 
     if (state.showInputs) {
         return (
@@ -114,7 +152,7 @@ export default ({ navigation }) => {
                 <Input 
                     onChangeText={text => dispatch({ type: 'PASSWORD', password: text })}
                     isValid={state.isPasswordValid}
-                    placeholder='Nova senha'
+                    placeholder='Nova senha'                    
                     secureTextEntry={true}
                 />
                 <Input
@@ -154,6 +192,7 @@ export default ({ navigation }) => {
             <Input
                 onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
                 placeholder='E-MAIL'
+                value={state.email}
                 keyboardType='email-address'
                 isValid={state.isEmailValid}                
             />

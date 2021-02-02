@@ -1,15 +1,14 @@
 import React, { useContext, useReducer } from 'react';
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 
 import { AuthContext } from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
-import { emailRegex, cpfCnpjRegex, phoneRegex } from '../utils/regExp';
-import { AuthContext } from '../components/AuthContext';
+import { emailRegex } from '../utils/regExp';
 
 
-export default () => {
+export default ({ navigation }) => {
     const { signUp } = useContext(AuthContext);
 
     const reducer = (prevState, action) => {
@@ -77,11 +76,7 @@ export default () => {
         name: '',
         isNameValid: false,
         email: '',
-        isEmailValid: false,
-        documentNumber: '',
-        isDocumentNumberValid: false,
-        phone: '',
-        isPhoneValid: false,
+        isEmailValid: false,        
         password: '',
         isPasswordValid: false,        
         confirmPassword: '',
@@ -105,37 +100,49 @@ export default () => {
             style={styles.container}
             behavior='height'                       
         >
-            <View>
-                <Input
-                    isValid={state.isNameValid}
-                    onChangeText={text => handleNameChange(text)} 
-                    placeholder='Nome'
-                />
-                <Input
-                    isValid={state.isEmailValid}
-                    onChangeText={text => handleEmailChange(text)} 
-                    placeholder='E-mail'
-                    keyboardType='email-address'                
-                />
-                <Input
-                    isValid={state.isPasswordValid}
-                    onChangeText={text => handlePasswordChange(text)} 
-                    placeholder='Senha'
-                    secureTextEntry={true}
-                />
-                <Input
-                    isValid={state.isConfirmPasswordValid}
-                    onChangeText={text => handleConfirmPasswordChange(text)} 
-                    placeholder='Confirmar senha'
-                    secureTextEntry={true}
-                />
-                <Button 
-                    title='Cadastre-se' 
-                    validForm={validForm} 
-                    disabled={!validForm}
-                    onPress={() => console.log('clique')}
-                />
-            </View>
+            <Input
+                isValid={state.isNameValid}
+                onChangeText={text => dispatch({ type: 'NAME', name: text })} 
+                placeholder='Nome'
+            />
+            <Input
+                isValid={state.isEmailValid}
+                onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
+                placeholder='E-mail'
+                keyboardType='email-address'                
+            />
+            <Input
+                isValid={state.isPasswordValid}
+                onChangeText={text => dispatch({ type: 'PASSWORD', password: text })} 
+                placeholder='Senha'
+                secureTextEntry={true}
+            />
+            <Input
+                isValid={state.isConfirmPasswordValid}
+                onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
+                placeholder='Confirmar senha'
+                secureTextEntry={true}
+            />
+            <Button 
+                title='Cadastre-se' 
+                validForm={validForm} 
+                disabled={!validForm}
+                onPress={ () => {
+                    signUp({
+                        name: state.name,
+                        email: state.email,
+                        password: state.password,
+                    });
+                    Alert.alert(
+                        'Sucesso', 
+                        'Usuario criado com sucesso!',
+                        [{
+                            text: 'Ok',
+                            onPress: () => navigation.navigate('SignInScreen')
+                        }]
+                    );                    
+                }}
+            />
         </KeyboardAvoidingView>
     );
 }

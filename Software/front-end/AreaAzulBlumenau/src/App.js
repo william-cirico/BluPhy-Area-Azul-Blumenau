@@ -5,7 +5,7 @@ import React,
     useMemo, 
     useReducer 
 } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Alert, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,7 +17,7 @@ import AppRoutes from './routes/AppRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 
 
-export default ({ navigation }) => {    
+export default () => {    
     const initialState = {
         isLoading: true,
         isSignout: false,
@@ -101,7 +101,19 @@ export default ({ navigation }) => {
             }
         },
         signUp: async data => {
-            // Implementar
+            try {
+                await axios.post(
+                    `${server}/users/`,
+                    {
+                        name: data.name,
+                        password: data.password,
+                        email: data.email
+                    }
+                );                                
+            } catch(e) {
+                console.log(e);
+            }
+        
         },
 	}), []);
 	
