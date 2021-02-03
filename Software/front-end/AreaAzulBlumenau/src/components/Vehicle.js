@@ -14,7 +14,7 @@ export default props => {
     const getLeftContent = () => {        
         return (
             <TouchableOpacity
-                onPress={() => console.log('teste')} 
+                onPress={props.deleteVehicle} 
                 style={styles.left}   
             >
                 <Icon 
@@ -37,6 +37,7 @@ export default props => {
                         <Text style={styles.carModelText}>{props.carModel}</Text>
                     </View>
                     <TouchableOpacity
+                        onPress={props.parkCar}
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}>{isParked ? 'ESTACIONADO' : 'ESTACIONAR'}</Text>

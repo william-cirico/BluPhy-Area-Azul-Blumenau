@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import Button from '../components/Button';
 import commonStyles from '../theme/commonStyles';
 
-export default ({ navigation }) => {
+export default ({ navigation, route }) => {
     const [value, setValue] = useState(7.5);
 
     return (
@@ -91,7 +91,7 @@ export default ({ navigation }) => {
                 <Button 
                     title='Pagar'
                     disabled={false}                
-                    onPress={() => navigation.navigate('PaymentScreen', {value: value})}
+                    onPress={() => navigation.push('PaymentScreen', {value: value})}
                 />
             </View>
         </View>

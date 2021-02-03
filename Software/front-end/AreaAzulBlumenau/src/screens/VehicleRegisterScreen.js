@@ -92,7 +92,7 @@ export default ({ navigation }) => {
                 [
                     {
                         title: 'Ok',
-                        onPress: () => navigation.navigate('MainScreen')
+                        onPress: () => navigation.push('MainScreen')
                     }
                 ]
             );

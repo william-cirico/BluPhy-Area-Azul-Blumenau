@@ -86,6 +86,7 @@ export default () => {
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;               
                 dispatch({ type: 'SIGN_IN', userToken: response.data.access_token});                
             } catch(e) {
+                console.log(e);
                 showErrorMessage(e);
             }
         },

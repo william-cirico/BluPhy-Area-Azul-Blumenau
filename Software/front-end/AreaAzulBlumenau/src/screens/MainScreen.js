@@ -16,6 +16,21 @@ export default ({ navigation }) => {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const parkCar = vehicle_id => {
+        navigation.navigate('ParkScreen', {vehicle_id: vehicle_id});
+    };
+
+    const deleteVehicle = async vehicle_id => {
+        try {
+            await axios.delete(`${server}/vehicles/${vehicle_id}`);
+            const filteredVehicles = vehicles.filter(item => item.vehicle_id !== vehicle_id);
+            setVehicles(filteredVehicles);
+        } catch(e) {
+            console.log(e);
+            showErrorMessage(e);
+        }
+    };
+
     useEffect(() => {
         const loadUserBalance = async () => {
             try {                                                              
@@ -64,8 +79,8 @@ export default ({ navigation }) => {
                 {vehicles ? 
                     <FlatList
                         data={vehicles}
-                        renderItem={({ item }) => <Vehicle licensePlate={item.license_plate} carModel={item.model} />} 
-                        keyExtractor={item => item.vehicle_id}                                   
+                        renderItem={({ item }) => <Vehicle licensePlate={item.license_plate} carModel={item.model} parkCar={() => {parkCar(item.vehicle_id)}} deleteVehicle={() => deleteVehicle(item.vehicle_id)} />} 
+                        keyExtractor={item => item.vehicle_id + ''}                                   
                     /> :
                     <Text style={{ textAlign: 'center', fontSize: 20 }}>Você não possui veículos cadastrados</Text>
                 }
@@ -73,7 +88,7 @@ export default ({ navigation }) => {
                 <Button 
                     title='Adicionar Veículo'
                     disabled={false}
-                    onPress={() => navigation.navigate('VehicleRegisterScreen')}                             
+                    onPress={() => navigation.push('VehicleRegisterScreen')}                             
                 />
             </View>
         </View>

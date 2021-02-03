@@ -113,7 +113,7 @@ export default ({ navigation }) => {
                 'Usuario criado com sucesso!',
                 [{
                     text: 'Ok',
-                    onPress: () => navigation.navigate('SignInScreen')
+                    onPress: () => navigation.push('SignInScreen')
                 }]
             );  
         } catch(e) {            
