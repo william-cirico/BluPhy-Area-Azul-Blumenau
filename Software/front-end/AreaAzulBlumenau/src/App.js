@@ -82,7 +82,8 @@ export default () => {
                         scope: 'user'
                     }) 
                 );                
-                await AsyncStorage.setItem('@auth_Token', response.data.access_token);                
+                await AsyncStorage.setItem('@auth_Token', response.data.access_token); 
+                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;               
                 dispatch({ type: 'SIGN_IN', userToken: response.data.access_token});                
             } catch(e) {
                 showErrorMessage(e);

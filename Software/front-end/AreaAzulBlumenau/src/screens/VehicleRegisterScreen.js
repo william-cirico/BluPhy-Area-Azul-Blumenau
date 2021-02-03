@@ -1,5 +1,5 @@
 import React, {useReducer, useState} from 'react';
-import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
 
 import Car from 'react-native-vector-icons/FontAwesome';
 import Motorcyle from 'react-native-vector-icons/MaterialIcons';
@@ -8,6 +8,8 @@ import LabelInput from '../components/LabelInput';
 import Button from '../components/Button';
 import commonStyles from '../theme/commonStyles';
 import { licensePlateRegex } from '../utils/regExp';
+import { server, showErrorMessage } from '../utils/common';
+import axios from 'axios';
 
 export default ({ navigation }) => {    
     const reducer = (prevState, action) => {        
@@ -74,9 +76,30 @@ export default ({ navigation }) => {
 
     const validForm = validations.reduce((acc, cv) => acc && cv);
 
-    const addVehicle = () => {
-        //TODO: Implementar
-        navigation.navigate('MainScreen')
+    const addVehicle = async () => {
+        try {            
+            await axios.post(
+                `${server}/vehicles/`,
+                {
+                    license_plate: state.licensePlate,
+                    model: state.vehicleModel,
+                    vehicle_type: "CARRO"
+                }
+            );
+            Alert.alert(
+                'Sucesso', 
+                'Veículo cadastrado com sucesso!',
+                [
+                    {
+                        title: 'Ok',
+                        onPress: () => navigation.navigate('MainScreen')
+                    }
+                ]
+            );
+            
+        } catch(e) {
+            Alert.alert('Erro', 'Não foi possível cadastrar esse veículo');
+        }        
     }
 
     return (
@@ -151,7 +174,7 @@ export default ({ navigation }) => {
                 <Button                               
                     title='Cadastrar Veículo'
                     disabled={!validForm}
-                    onPress={() => addVehicle}
+                    onPress={addVehicle}
                 />
             </View>                         
         </View>

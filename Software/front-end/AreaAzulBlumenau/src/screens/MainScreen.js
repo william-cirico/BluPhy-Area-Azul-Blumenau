@@ -25,8 +25,8 @@ export default ({ navigation }) => {
                 setBalance(balance_res.data.balance);                
                 vehiclesList = await axios(
                     `${server}/vehicles/`
-                );                
-                setVehicles(vehiclesList.data);
+                );                                
+                setVehicles(vehiclesList.data);                
                 setIsLoading(false);
             } catch(e) {
                 showErrorMessage(e);
@@ -64,15 +64,16 @@ export default ({ navigation }) => {
                 {vehicles ? 
                     <FlatList
                         data={vehicles}
-                        renderItem={({ item }) => <Vehicle licensePlate={item.placa} carModel={item.modelo} />} 
-                        keyExtractor={item => item.id_veiculo}                                   
+                        renderItem={({ item }) => <Vehicle licensePlate={item.license_plate} carModel={item.model} />} 
+                        keyExtractor={item => item.vehicle_id}                                   
                     /> :
                     <Text style={{ textAlign: 'center', fontSize: 20 }}>Você não possui veículos cadastrados</Text>
                 }
                 
                 <Button 
                     title='Adicionar Veículo'
-                    disabled={false}                             
+                    disabled={false}
+                    onPress={() => navigation.navigate('VehicleRegisterScreen')}                             
                 />
             </View>
         </View>
