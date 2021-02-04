@@ -47,11 +47,11 @@ class Recharge(RechargeBase):
 
 class UserBase(BaseModel):
     name: str
+    email: str
 
 
 class UserCreate(UserBase):
-    password: str
-    email: str
+    password: str    
 
 
 class UserUpdate(UserBase):

@@ -118,8 +118,8 @@ async def update_user(
         user: schemas.UserUpdate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Security(get_current_user, scopes=["user"])
-):
-    crud.update_user(db, user, current_user.user_id)
+):    
+    crud.update_user(db, user, current_user.user_id)    
     return crud.get_user_by_email(db, current_user.email)
 
 

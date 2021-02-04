@@ -110,8 +110,7 @@ def update_user(db: Session, user: schemas.UserUpdate, user_id):
         .filter(models.User.user_id == user_id)\
         .update({
             models.User.name: user.name,
-            models.User.phone: user.phone,
-            models.User.document_number: user.document_number,
+            models.User.email: user.email,            
         })
     db.commit()
 
