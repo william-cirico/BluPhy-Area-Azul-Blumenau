@@ -4,7 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import VehicleEditScreen from '../screens/VehicleEditScreen';
-import CardEditScreen from '../screens/CardEditScreen';
+import UserEditScreen from '../screens/UserEditScreen';
 import MainScreen from '../screens/MainScreen';
 import VehicleRegisterScreen from '../screens/VehicleRegisterScreen';
 import RechargeScreen from '../screens/RechargeScreen';
@@ -21,7 +21,7 @@ const AppStack = createStackNavigator();
 const MainScreenDrawer = ({ navigation }) => (
     <MenuDrawer.Navigator
         drawerContent={props => <DrawerMenu {...props} />}
-        openByDefault={true}
+        openByDefault={true}        
     >
         <MenuDrawer.Screen
             name='MainScreen'
@@ -61,11 +61,11 @@ export default ({ navigation }) => (
                 name='VehicleEditScreen' 
                 component={VehicleEditScreen} 
                 options={{ title: 'Editar Veículos' }}
-            />            
+            />                        
             <AppStack.Screen 
-                name='CardEditScreen' 
-                component={CardEditScreen}
-                options={{ title: 'Editar Cartão' }}
+                name='UserEditScreen' 
+                component={UserEditScreen}
+                options={{ title: 'Editar Usuário' }}
             />
         </AppStack.Navigator>
 );

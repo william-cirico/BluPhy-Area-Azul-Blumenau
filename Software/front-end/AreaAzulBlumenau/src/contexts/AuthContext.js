@@ -36,6 +36,11 @@ export default ({ children }) => {
                     userToken: null,
                     userData: null,
                 };
+            case 'USER_UPDATE':
+                return {
+                    ...prevState,                    
+                    userData: action.userData
+                }
         }
     };
 
@@ -50,10 +55,11 @@ export default ({ children }) => {
                 // Obtendo o token de autenticação do AsyncStorage
                 userToken = await AsyncStorage.getItem('@auth_token');
                 // Validando o token e obtendo os dados do usuário
-                userData = await axios(
+                res = await axios(
                     `${server}/users/`,
                     {headers: {'Authorization': `bearer ${userToken}`}}
                 ); 
+                userData = res.data;
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                                              
             } catch(e) {                
@@ -77,7 +83,7 @@ export default ({ children }) => {
                 // Utilizando o QS para mandar um x-www-form-urlencoded
                 const qs = require('qs');
                 // Fazendo a requisição
-                const res = await axios.post(
+                const resToken = await axios.post(
                     `${server}/auth/login`,
                     qs.stringify({
                         username: username,
@@ -86,15 +92,18 @@ export default ({ children }) => {
                     })
                 );
 
-                const userToken = res.data.access_token
+                const userToken = resToken.data.access_token
                 
                 // Salvando o token recebido no AsyncStorage
                 AsyncStorage.setItem('@auth_token', userToken);                
                 // Obtendo os dados do usuário
-                const userData = await axios(
+                const resUserData = await axios(
                     `${server}/users/`,
                     {headers: {'Authorization': `bearer ${userToken}`}}
                 );
+
+                const userData = resUserData.data;
+
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;
                 // Salvando o estado
@@ -118,6 +127,9 @@ export default ({ children }) => {
             } catch(e) {
                 showErrorMessage(e);
             }
+        },
+        userUpdate: async (userData) => {
+            dispatch({ type: 'UPDATE_USER', userData: userData });
         }
     }), []);
 

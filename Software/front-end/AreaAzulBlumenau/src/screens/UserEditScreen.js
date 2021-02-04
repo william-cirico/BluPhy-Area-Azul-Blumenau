@@ -1,16 +1,18 @@
 import React, { useContext, useReducer } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 
 import axios from 'axios';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
-import { emailRegex } from '../utils/regExp';
 import { server, showErrorMessage } from '../utils/common';
+import { AuthContext } from '../contexts/AuthContext';
+
+export default ({ navigation, route }) => {
+    const [_, __, { userUpdate }] = useContext(AuthContext);
 
 
-export default ({ navigation}) => {
     const reducer = (prevState, action) => {
         switch (action.type) {
             case 'NAME':
@@ -40,47 +42,15 @@ export default ({ navigation}) => {
                         email: action.email,
                         isEmailValid: false,
                     }
-                }
-            case 'PASSWORD':
-                if (action.password.length >= 6) {
-                    return {
-                        ...prevState,
-                        password: action.password,
-                        isPasswordValid: true,
-                    }
-                } else {
-                    return {
-                        ...prevState,
-                        password: action.password,
-                        isPasswordValid: false,
-                    }
-                }
-            case 'CONFIRM_PASSWORD':
-                if (action.confirmPassword === prevState.password && action.confirmPassword != '') {
-                    return {
-                        ...prevState,
-                        confirmPassword: action.confirmPassword,
-                        isConfirmPasswordValid: true,
-                    }
-                } else {
-                    return {
-                        ...prevState,
-                        confirmPassword: action.confirmPassword,
-                        isConfirmPasswordValid: false,
-                    }
-                }                
+                }           
         }
     };
 
      const initialState = {
-        name: '',
-        isNameValid: false,
-        email: '',
-        isEmailValid: false,        
-        password: '',
-        isPasswordValid: false,        
-        confirmPassword: '',
-        isConfirmPasswordValid: false,        
+        name: route.params.name || '',
+        isNameValid: route.params.name ? true : false,
+        email: route.params.email || '',
+        isEmailValid: route.params.email ? true : false,    
     }
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -88,31 +58,34 @@ export default ({ navigation}) => {
     
     const validations = [
         state.isNameValid, 
-        state.isEmailValid, 
-        state.isPasswordValid,
-        state.isConfirmPasswordValid,
+        state.isEmailValid,         
     ];
     
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
-    const handleSignUp = async () => {
+    const handleEditUser = async () => {
         try {
-            await axios.post(
+            // Atualizando os dados no banco
+            const res = await axios.put(
                 `${server}/users/`,
                 {
-                    name: state.name,
-                    password: state.password,
+                    name: state.name,                    
                     email: state.email
                 }
-            );                                
+            );
+            
+            const userData = res.data;
+            // Atualizando os dados do usuário no estado
+            userUpdate(userData);
+
             Alert.alert(
                 'Sucesso', 
-                'Usuario criado com sucesso!',
+                'Dados do usuário editados com sucesso!',
                 [{
                     text: 'Ok',
-                    onPress: () => navigation.push('SignInScreen')
+                    onPress: () => navigation.push('MainScreen')
                 }]
-            );  
+            );              
         } catch(e) {            
             showErrorMessage(e);
         }
@@ -126,31 +99,21 @@ export default ({ navigation}) => {
             <Input
                 isValid={state.isNameValid}
                 onChangeText={text => dispatch({ type: 'NAME', name: text })} 
-                placeholder='Nome'
+                placeholder='Nome'    
+                value={state.name}            
             />
             <Input
                 isValid={state.isEmailValid}
                 onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
                 placeholder='E-mail'
                 keyboardType='email-address'                
-            />
-            <Input
-                isValid={state.isPasswordValid}
-                onChangeText={text => dispatch({ type: 'PASSWORD', password: text })} 
-                placeholder='Senha'
-                secureTextEntry={true}
-            />
-            <Input
-                isValid={state.isConfirmPasswordValid}
-                onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
-                placeholder='Confirmar senha'
-                secureTextEntry={true}
-            />
+                value={state.email}
+            />    
             <Button 
-                title='Cadastre-se' 
+                title='Editar usuário' 
                 validForm={validForm} 
                 disabled={!validForm}
-                onPress={handleSignUp}
+                onPress={handleEditUser}
             />
         </KeyboardAvoidingView>
     );

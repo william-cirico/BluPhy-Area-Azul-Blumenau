@@ -1,7 +1,6 @@
 import React, { useContext }  from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {
-    DrawerContentScrollView,
+import {    
     DrawerItem
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,15 +10,14 @@ import commonStyles from '../theme/commonStyles';
 
 
 export default props => {    
-    const [_, __, { signOut }] = useContext(AuthContext);   
+    const [userData, __, { signOut }] = useContext(AuthContext);   
 
     return (
         <View style={styles.container}>
-            <DrawerContentScrollView {...props}>
-                <View style={styles.header}>
-                    <Text style={styles.headerLabel}>William Círico</Text>
-                </View>  
-                <View style={styles.body}>
+            <View style={styles.header}>
+                <Text style={styles.headerLabel}>{userData.name}</Text>
+            </View>                 
+                <View style={styles.body}>                                  
                     <DrawerItem 
                         icon={({color, size}) => (
                             <Icon 
@@ -29,8 +27,9 @@ export default props => {
                             />
                         )}
                         label='Editar Veículos'
-                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}}
-                        inactiveBackgroundColor='white'
+                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}} 
+                        inactiveTintColor='black'               
+
                     />
                     <DrawerItem 
                         icon={({color, size}) => (
@@ -40,24 +39,21 @@ export default props => {
                                 size={size}
                             />
                         )}
-                        label='Editar dados do usuário'
-                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}}
-                    />
-                    <View style={styles.footer}> 
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                    name='sign-out'
-                                    color={color}
-                                    size={size}
-                                />
-                            )}
-                            label='Sair'
-                            onPress={signOut}
-                        />             
-                    </View>                                
+                        label='Editar perfil'
+                        onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email})}}                                                
+                    />                    
+                    <DrawerItem 
+                        icon={({color, size}) => (
+                            <Icon 
+                                name='sign-out'
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label='Sair'
+                        onPress={signOut}                        
+                    />                        
                 </View>
-            </DrawerContentScrollView>
         </View>
     );
 }
@@ -75,7 +71,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#CCC',      
     },
     headerLabel: {
-        fontSize: 30,
+        fontSize: 20,
         textAlign: 'center',
         color: 'white'
     },
