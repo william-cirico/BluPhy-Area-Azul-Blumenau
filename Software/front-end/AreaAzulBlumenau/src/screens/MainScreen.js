@@ -70,7 +70,7 @@ export default ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.rechargeButton}
                         activeOpacity={0.9}
-                        onPress={() => console.log('clique')}
+                        onPress={() => navigation.navigate('RechargeScreen')}
                     >
                         <Icon name='plus' size={30} color='white' />
                     </TouchableOpacity>

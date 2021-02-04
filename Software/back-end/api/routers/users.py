@@ -33,6 +33,13 @@ async def get_balance(
     return {'balance': user.balance}
 
 
+@router.get('/', response_model=schemas.User)
+async def get_user(
+    user: schemas.User = Security(get_current_user, scopes=["user"])
+):
+    return user;
+
+
 @router.get('/send-verification-code/{email}')
 async def send_verification_code(email: str, db: Session = Depends(get_db)):
     if not crud.get_user_by_email(db, email):
@@ -60,7 +67,7 @@ async def send_verification_code(email: str, db: Session = Depends(get_db)):
         server.login(settings.admin_email, settings.admin_email_password)
         server.send_message(email_msg)
 
-    return {"message": 'E-mail enviadogi'}
+    return {"message": 'E-mail enviado'}
 
 
 @router.post('/check-verification-code/{email}')

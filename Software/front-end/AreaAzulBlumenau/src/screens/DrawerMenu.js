@@ -4,18 +4,17 @@ import {
     DrawerContentScrollView,
     DrawerItem
 } from '@react-navigation/drawer';
-
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { AuthContext } from '../contexts/AuthContext';
 import commonStyles from '../theme/commonStyles';
 
 
-export default props => {       
+export default props => {    
+    const [_, __, { signOut }] = useContext(AuthContext);   
 
     return (
-        <View            
-            style={styles.container}
-        >
+        <View style={styles.container}>
             <DrawerContentScrollView {...props}>
                 <View style={styles.header}>
                     <Text style={styles.headerLabel}>William Círico</Text>
@@ -31,6 +30,7 @@ export default props => {
                         )}
                         label='Editar Veículos'
                         onPress={() => {props.navigation.navigate('VehicleEditScreen')}}
+                        inactiveBackgroundColor='white'
                     />
                     <DrawerItem 
                         icon={({color, size}) => (
@@ -53,6 +53,7 @@ export default props => {
                                 />
                             )}
                             label='Sair'
+                            onPress={signOut}
                         />             
                     </View>                                
                 </View>
@@ -63,8 +64,7 @@ export default props => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white',
+        flex: 1,        
     },
     header: {
         height: 100,

@@ -17,10 +17,11 @@ const MenuDrawer = createDrawerNavigator();
 const AppStack = createStackNavigator();
 
 
+
 const MainScreenDrawer = ({ navigation }) => (
     <MenuDrawer.Navigator
-        drawerContent={DrawerMenu}
-        // openByDefault={true}
+        drawerContent={props => <DrawerMenu {...props} />}
+        openByDefault={true}
     >
         <MenuDrawer.Screen
             name='MainScreen'

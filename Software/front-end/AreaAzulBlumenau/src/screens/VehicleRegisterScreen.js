@@ -1,5 +1,5 @@
 import React, {useReducer, useState} from 'react';
-import { Alert, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
+import { Alert, Dimensions, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
 
 import Car from 'react-native-vector-icons/FontAwesome';
 import Motorcyle from 'react-native-vector-icons/MaterialIcons';
@@ -42,7 +42,7 @@ export default ({ navigation }) => {
                     }
                 }
             case 'VEHICLE_MODEL':
-                if (action.vehicleModel.trim().length >= 6) {
+                if (action.vehicleModel.trim().length >= 3) {
                     return {
                         ...prevState,
                         isVehicleModelValid: true,                    
@@ -103,81 +103,87 @@ export default ({ navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior="height"
+        >
             <View style={styles.bodyContainer}>
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        onPress={() => dispatch({ type: 'CAR' })}
-                        style={
-                            [styles.button, state.isCarChecked ? 
-                            {backgroundColor: commonStyles.colors.mainColor} : 
-                            {
-                                backgroundColor: 'white',
-                                borderColor: commonStyles.colors.mainColor,
-                                borderWidth: 3,
-                            }]
-                        }
-                    >
-                        <Car 
-                            name='car' 
-                            size={30} 
-                            color={
-                                state.isCarChecked ? 'white' : commonStyles.colors.mainColor
-                            } 
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => dispatch({ type: 'MOTORCYCLE' })}
-                        style={
-                            [styles.button, state.isMotorcycleChecked ? 
-                            {backgroundColor: commonStyles.colors.mainColor} : 
-                            {
-                                backgroundColor: 'white',
-                                borderColor: commonStyles.colors.mainColor,
-                                borderWidth: 3,
-                            }]
-                        }
-                    >            
-                        <Motorcyle 
-                            name='two-wheeler' 
-                            size={50} 
-                            color={
-                                state.isMotorcycleChecked ? 'white' : commonStyles.colors.mainColor
-                            }                         
-                        />
-                    </TouchableOpacity>
+                <View>
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity
+                            onPress={() => dispatch({ type: 'CAR' })}
+                            style={
+                                [styles.button, state.isCarChecked ? 
+                                {backgroundColor: commonStyles.colors.mainColor} : 
+                                {
+                                    backgroundColor: 'white',
+                                    borderColor: commonStyles.colors.mainColor,
+                                    borderWidth: 3,
+                                }]
+                            }
+                        >
+                            <Car 
+                                name='car' 
+                                size={30} 
+                                color={
+                                    state.isCarChecked ? 'white' : commonStyles.colors.mainColor
+                                } 
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => dispatch({ type: 'MOTORCYCLE' })}
+                            style={
+                                [styles.button, state.isMotorcycleChecked ? 
+                                {backgroundColor: commonStyles.colors.mainColor} : 
+                                {
+                                    backgroundColor: 'white',
+                                    borderColor: commonStyles.colors.mainColor,
+                                    borderWidth: 3,
+                                }]
+                            }
+                        >            
+                            <Motorcyle 
+                                name='two-wheeler' 
+                                size={50} 
+                                color={
+                                    state.isMotorcycleChecked ? 'white' : commonStyles.colors.mainColor
+                                }                         
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <LabelInput 
+                        label='PLACA'
+                        isValid={state.islicensePlateValid}
+                        autoCapitalize='characters'                    
+                        keyboardType='default'
+                        onChangeText={text => dispatch({ 
+                            type: 'LICENSE_PLATE',
+                            licensePlate: text.toUpperCase(),
+                        })} 
+                        placeholder=''
+                    />           
+                    <LabelInput 
+                        label='MODELO'
+                        isValid={state.isVehicleModelValid}
+                        autoCapitalize='characters'                    
+                        keyboardType='default'
+                        onChangeText={text => dispatch({ 
+                            type: 'VEHICLE_MODEL',
+                            vehicleModel: text.toUpperCase(),
+                        })} 
+                        placeholder=''
+                    />
                 </View>
-                <LabelInput 
-                    label='PLACA'
-                    isValid={state.islicensePlateValid}
-                    autoCapitalize='characters'                    
-                    keyboardType='default'
-                    onChangeText={text => dispatch({ 
-                        type: 'LICENSE_PLATE',
-                        licensePlate: text.toUpperCase(),
-                    })} 
-                    placeholder=''
-                />           
-                <LabelInput 
-                    label='MODELO'
-                    isValid={state.isVehicleModelValid}
-                    autoCapitalize='characters'                    
-                    keyboardType='default'
-                    onChangeText={text => dispatch({ 
-                        type: 'VEHICLE_MODEL',
-                        vehicleModel: text.toUpperCase(),
-                    })} 
-                    placeholder=''
-                />
+                <View style={styles.buttonContainer}>
+                    <Button                               
+                        title='Cadastrar Veículo'
+                        disabled={!validForm}
+                        onPress={addVehicle}
+                    /> 
+                </View>
             </View> 
-            <View style={styles.containerButton}>
-                <Button                               
-                    title='Cadastrar Veículo'
-                    disabled={!validForm}
-                    onPress={addVehicle}
-                />
-            </View>                         
-        </View>
+                                 
+        </KeyboardAvoidingView>
     );
 }
 
@@ -199,12 +205,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginHorizontal: 5,       
     },
-    containerButton: {
-        flex: 1,
-        justifyContent: 'flex-end',
-    },
     bodyContainer: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'space-evenly',       
+    },
+    buttonContainer: {        
+        justifyContent: 'flex-end'
     }
 });

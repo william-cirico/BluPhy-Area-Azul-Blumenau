@@ -3,7 +3,6 @@ import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 
 import axios from 'axios';
 
-import { AuthContext } from '../components/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
@@ -12,8 +11,6 @@ import { server, showErrorMessage } from '../utils/common';
 
 
 export default ({ navigation }) => {
-    const { signUp } = useContext(AuthContext);
-
     const reducer = (prevState, action) => {
         switch (action.type) {
             case 'NAME':
