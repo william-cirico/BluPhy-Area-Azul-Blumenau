@@ -61,9 +61,7 @@ class UserUpdate(UserBase):
 class User(UserBase):
     user_id: int
     email: str
-    balance: float
-    vehicles: List[Vehicle] = []
-    recharges: List[Recharge] = []
+    balance: float    
 
     class Config:
         orm_mode = True

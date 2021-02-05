@@ -12,7 +12,6 @@ export default ({ children }) => {
     const initialState = {
         isLoading: true,        
         userToken: null,
-        userData: null,
     };
     
     const reducer = (prevState, action) => {
@@ -22,58 +21,43 @@ export default ({ children }) => {
                     ...prevState,
                     isLoading: false,                    
                     userToken: action.userToken,
-                    userData: action.userData,
                 };
             case 'SIGN_IN':
                 return {
                     ...prevState,                
                     userToken: action.userToken,
-                    userData: action.userData,
                 };
             case 'SIGN_OUT':
                 return {
                     ...prevState,                 
                     userToken: null,
-                    userData: null,
                 };
-            case 'USER_UPDATE':
-                return {
-                    ...prevState,                    
-                    userData: action.userData
-                }
         }
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {        
-        const loadStorageData = async () => { 
-            let userToken = null
-            let userData = null
-
+        const loadStorageData = async () => {             
             try {
                 // Obtendo o token de autenticação do AsyncStorage
-                userToken = await AsyncStorage.getItem('@auth_token');
-                // Validando o token e obtendo os dados do usuário
-                res = await axios(
+                const userToken = await AsyncStorage.getItem('@auth_token');
+                // Validando o token
+                await axios(
                     `${server}/users/`,
                     {headers: {'Authorization': `bearer ${userToken}`}}
                 ); 
-                userData = res.data;
                 // Definindo o header de Authorization para as próximas requisições
-                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                                              
+                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;
+                    // Salvando o estado
+                dispatch({ 
+                    type: 'RESTORE_TOKEN', 
+                    userToken: userToken, 
+                }); 
             } catch(e) {                
                 console.log(`Não foi possível restaurar o Token: ${e}`);
-            } 
-
-            // Salvando o estado
-            dispatch({ 
-                type: 'RESTORE_TOKEN', 
-                userToken: userToken, 
-                userData: userData
-            }); 
+            }             
         }
-
         loadStorageData();
     }, []);
 
@@ -97,20 +81,17 @@ export default ({ children }) => {
                 // Salvando o token recebido no AsyncStorage
                 AsyncStorage.setItem('@auth_token', userToken);                
                 // Obtendo os dados do usuário
-                const resUserData = await axios(
+                await axios(
                     `${server}/users/`,
                     {headers: {'Authorization': `bearer ${userToken}`}}
                 );
-
-                const userData = resUserData.data;
 
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;
                 // Salvando o estado
                 dispatch({
                     type: 'SIGN_IN',
-                    userToken: userToken,
-                    userData: userData,
+                    userToken: userToken                    
                 });
             } catch(e) {
                 showErrorMessage(e);
@@ -128,13 +109,10 @@ export default ({ children }) => {
                 showErrorMessage(e);
             }
         },
-        userUpdate: async (userData) => {
-            dispatch({ type: 'UPDATE_USER', userData: userData });
-        }
     }), []);
 
     return (
-        <AuthContext.Provider value={[state.userData, state.isLoading, authContext]}>
+        <AuthContext.Provider value={{userToken: state.userToken, isLoading: state.isLoading, authContext: authContext}}>
             {children}
         </AuthContext.Provider>
     );

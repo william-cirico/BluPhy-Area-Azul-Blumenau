@@ -8,10 +8,11 @@ import { server, showErrorMessage } from '../utils/common';
 import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
+import { VehicleContext } from '../contexts/VehicleContext';
 
 export default ({ navigation }) => {       
-    const [vehicles, setVehicles] = useState([]);
-
+    const { vehicles } = useContext(VehicleContext);
+    
     const [balance, setBalance] = useState(0);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -20,28 +21,13 @@ export default ({ navigation }) => {
         navigation.navigate('ParkScreen', {vehicle_id: vehicle_id});
     };
 
-    const deleteVehicle = async vehicle_id => {
-        try {
-            await axios.delete(`${server}/vehicles/${vehicle_id}`);
-            const filteredVehicles = vehicles.filter(item => item.vehicle_id !== vehicle_id);
-            setVehicles(filteredVehicles);
-        } catch(e) {
-            console.log(e);
-            showErrorMessage(e);
-        }
-    };
-
     useEffect(() => {
         const loadUserBalance = async () => {
             try {                                                              
                 balance_res = await axios(
                     `${server}/users/balance`
                 );                
-                setBalance(balance_res.data.balance);                
-                vehiclesList = await axios(
-                    `${server}/vehicles/`
-                );                                
-                setVehicles(vehiclesList.data);                
+                setBalance(balance_res.data.balance);                               
                 setIsLoading(false);
             } catch(e) {
                 showErrorMessage(e);
@@ -79,7 +65,12 @@ export default ({ navigation }) => {
                 {vehicles ? 
                     <FlatList
                         data={vehicles}
-                        renderItem={({ item }) => <Vehicle licensePlate={item.license_plate} carModel={item.model} parkCar={() => {parkCar(item.vehicle_id)}} deleteVehicle={() => deleteVehicle(item.vehicle_id)} />} 
+                        renderItem={({ item }) => <Vehicle
+                            vehicleId={item.vehicle_id} 
+                            licensePlate={item.license_plate} 
+                            carModel={item.model} 
+                            parkCar={() => {parkCar(item.vehicle_id)}} />
+                        } 
                         keyExtractor={item => item.vehicle_id + ''}                                   
                     /> :
                     <Text style={{ textAlign: 'center', fontSize: 20 }}>Você não possui veículos cadastrados</Text>

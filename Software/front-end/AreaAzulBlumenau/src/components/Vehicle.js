@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 
@@ -6,15 +6,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import commonStyles from '../theme/commonStyles';
+import { VehicleContext } from '../contexts/VehicleContext';
 
 export default props => {
     [isLeftButtonShown, setIsLeftButtonShown] = useState(false);
     [isParked, setIsParked] = useState(false);
 
-    const getLeftContent = () => {        
+    const { vehicleDelete } = useContext(VehicleContext);
+
+    const getLeftContent = () => {                   
         return (
             <TouchableOpacity
-                onPress={props.deleteVehicle} 
+                onPress={() => vehicleDelete(props.vehicleId)} 
                 style={styles.left}   
             >
                 <Icon 

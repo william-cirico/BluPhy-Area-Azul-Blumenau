@@ -9,7 +9,7 @@ import AppRoutes from './routes/AppRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 
 const Router = () => {
-    const [userData, isLoading] = useContext(AuthContext);
+    const {userToken, isLoading} = useContext(AuthContext);
 
     if (isLoading) {
         return (
@@ -19,7 +19,7 @@ const Router = () => {
 		);
     }
 
-    if (userData) {
+    if (userToken) {
         return <AppRoutes />
     }
 

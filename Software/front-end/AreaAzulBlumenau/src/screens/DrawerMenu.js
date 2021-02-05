@@ -1,16 +1,45 @@
-import React, { useContext }  from 'react';
+import React, { useContext, useEffect, useState }  from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {    
     DrawerItem
 } from '@react-navigation/drawer';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+
+import { server, showErrorMessage } from '../utils/common';
 import { AuthContext } from '../contexts/AuthContext';
 import commonStyles from '../theme/commonStyles';
 
 
 export default props => {    
-    const [userData, __, { signOut }] = useContext(AuthContext);   
+    const { authContext } = useContext(AuthContext);   
+    const [userData, setUserData] = useState({});
+    const [vehicles, setVehicles] = useState([]);
+
+    useEffect(() => {
+        const loadUserData = async () => {
+            try {
+                const res = await axios(
+                    `${server}/users/`
+                );
+                setUserData(res.data);                
+            } catch(e) {
+                console.log(e);
+            }
+        }
+        const loadVehicles = async () => {
+            try {
+                res = await axios(`${server}/vehicles/`);                
+                setVehicles(res.data);                                
+            } catch(e) {
+                showErrorMessage(e);
+            }
+        };
+        
+        loadUserData();
+        loadVehicles();        
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -21,27 +50,41 @@ export default props => {
                     <DrawerItem 
                         icon={({color, size}) => (
                             <Icon 
-                                name='car'
-                                color={color}
-                                size={size}
-                            />
-                        )}
-                        label='Editar Veículos'
-                        onPress={() => {props.navigation.navigate('VehicleEditScreen')}} 
-                        inactiveTintColor='black'               
-
-                    />
-                    <DrawerItem 
-                        icon={({color, size}) => (
-                            <Icon 
                                 name='user'
                                 color={color}
                                 size={size}
                             />
                         )}
+                        inactiveTintColor='black'
                         label='Editar perfil'
                         onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email})}}                                                
-                    />                    
+                    /> 
+                    {!!vehicles ?
+                        <DrawerItem 
+                            icon={({color, size}) => (
+                                <Icon 
+                                    name='car'
+                                    color={color}
+                                    size={size}
+                                />
+                            )}
+                            label='Editar Veículos'
+                            inactiveTintColor='black'
+                            onPress={() => {props.navigation.navigate('VehicleRegisterScreen', {title: 'Editar Veículos'})}}                                                            
+                        />  :
+                        <DrawerItem 
+                            icon={({color, size}) => (
+                                <Icon 
+                                    name='car'
+                                    color={color}
+                                    size={size}
+                                />
+                            )}
+                            label='Editar Veículos'                            
+                        />
+                    }
+                    
+                                       
                     <DrawerItem 
                         icon={({color, size}) => (
                             <Icon 
@@ -50,8 +93,9 @@ export default props => {
                                 size={size}
                             />
                         )}
+                        inactiveTintColor='black'
                         label='Sair'
-                        onPress={signOut}                        
+                        onPress={authContext.signOut}                        
                     />                        
                 </View>
         </View>

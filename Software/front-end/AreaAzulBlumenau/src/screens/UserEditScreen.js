@@ -1,5 +1,5 @@
-import React, { useContext, useReducer } from 'react';
-import {KeyboardAvoidingView, StyleSheet} from 'react-native';
+import React, { useReducer } from 'react';
+import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 
 import axios from 'axios';
 
@@ -7,12 +7,8 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
 import { server, showErrorMessage } from '../utils/common';
-import { AuthContext } from '../contexts/AuthContext';
 
 export default ({ navigation, route }) => {
-    const [_, __, { userUpdate }] = useContext(AuthContext);
-
-
     const reducer = (prevState, action) => {
         switch (action.type) {
             case 'NAME':
@@ -66,17 +62,13 @@ export default ({ navigation, route }) => {
     const handleEditUser = async () => {
         try {
             // Atualizando os dados no banco
-            const res = await axios.put(
+            await axios.put(
                 `${server}/users/`,
                 {
                     name: state.name,                    
                     email: state.email
                 }
             );
-            
-            const userData = res.data;
-            // Atualizando os dados do usuário no estado
-            userUpdate(userData);
 
             Alert.alert(
                 'Sucesso', 

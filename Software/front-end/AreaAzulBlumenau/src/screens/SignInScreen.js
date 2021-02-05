@@ -9,7 +9,7 @@ import { AuthContext } from '../contexts/AuthContext';
 
 
 export default ({ navigation }) => {
-    const [_, __, { signIn }] = useContext(AuthContext);
+    const { authContext } = useContext(AuthContext);
 
     const reducer = (prevState, action) => {
         switch(action.type) {
@@ -98,7 +98,7 @@ export default ({ navigation }) => {
                         validForm={validForm} 
                         disabled={!validForm}
                         onPress={() => {
-                            signIn({username: state.email, password: state.password}); 
+                            authContext.signIn({username: state.email, password: state.password}); 
                         }}                    
                     />
                     <TouchableOpacity style={styles.register}

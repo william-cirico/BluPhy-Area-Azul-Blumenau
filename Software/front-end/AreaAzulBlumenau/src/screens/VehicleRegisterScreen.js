@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from 'react';
+import React, { useReducer, useContext } from 'react';
 import { Alert, Dimensions, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
 
 import Car from 'react-native-vector-icons/FontAwesome';
@@ -8,25 +8,16 @@ import LabelInput from '../components/LabelInput';
 import Button from '../components/Button';
 import commonStyles from '../theme/commonStyles';
 import { licensePlateRegex } from '../utils/regExp';
-import { server, showErrorMessage } from '../utils/common';
-import axios from 'axios';
+import {VehicleContext} from '../contexts/VehicleContext';
 
-export default ({ navigation }) => {    
+export default ({ navigation, route }) => {    
     const reducer = (prevState, action) => {        
         switch(action.type) {
-            case 'CAR':
+            case 'VEHICLE_TYPE':
                 return {
                     ...prevState,
-                    isCarChecked: true,
-                    isMotorcycleChecked: false,
-                }
-            case 'MOTORCYCLE':
-                return {
-                    ...prevState,
-                    isCarChecked: false,
-                    isMotorcycleChecked: true,
-                    
-                }
+                    vehicleType: action.vehicleType
+                }            
             case 'LICENSE_PLATE':                            
                 if (licensePlateRegex.test(action.licensePlate)) {                    
                     return {
@@ -58,13 +49,12 @@ export default ({ navigation }) => {
         }
     };
 
-    initialState = {
-        isCarChecked: true,
-        isMotorcycleChecked: false,
-        licensePlate: 'BRA2E19',
+    initialState = {        
+        licensePlate: route.params ? route.params.licensePlate : '',
         islicensePlateValid: false,
-        vehicleModel: '',
+        vehicleModel: route.params ? route.params.vehicleModel : '',
         isVehicleModelValid: false,
+        vehicleType: route.params ? route.params.vehicleType : 'CARRO',
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -76,31 +66,37 @@ export default ({ navigation }) => {
 
     const validForm = validations.reduce((acc, cv) => acc && cv);
 
-    const addVehicle = async () => {
-        try {            
-            await axios.post(
-                `${server}/vehicles/`,
+    const { vehicleCreate } = useContext(VehicleContext);
+
+    const addVehicle = () => {                
+        vehicleCreate(state.licensePlate, state.vehicleModel, state.vehicleType) &&
+        Alert.alert(
+            'Sucesso', 
+            'Veículo cadastrado com sucesso!',
+            [
                 {
-                    license_plate: state.licensePlate,
-                    model: state.vehicleModel,
-                    vehicle_type: "CARRO"
+                    title: 'Ok',
+                    onPress: () => navigation.push('MainScreen')
                 }
-            );
-            Alert.alert(
-                'Sucesso', 
-                'Veículo cadastrado com sucesso!',
-                [
-                    {
-                        title: 'Ok',
-                        onPress: () => navigation.push('MainScreen')
-                    }
-                ]
-            );
-            
-        } catch(e) {
-            Alert.alert('Erro', 'Não foi possível cadastrar esse veículo');
-        }        
+            ]
+        );             
     }
+
+    const { vehicleUpdate } = useContext(VehicleContext);
+
+    const editVehicle = () => {
+        vehicleUpdate(state.licensePlate, state.vehicleModel, state.vehicleType) &&
+        Alert.alert(
+            'Sucesso', 
+            'Veículo editado com sucesso!',
+            [
+                {
+                    title: 'Ok',
+                    onPress: () => navigation.push('MainScreen')
+                }
+            ]
+        ); 
+    };
 
     return (
         <KeyboardAvoidingView 
@@ -111,9 +107,9 @@ export default ({ navigation }) => {
                 <View>
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
-                            onPress={() => dispatch({ type: 'CAR' })}
+                            onPress={() => dispatch({ type: 'VEHICLE_TYPE', vehicleType: 'CARRO' })}
                             style={
-                                [styles.button, state.isCarChecked ? 
+                                [styles.button, state.vehicleType === 'CARRO' ? 
                                 {backgroundColor: commonStyles.colors.mainColor} : 
                                 {
                                     backgroundColor: 'white',
@@ -126,14 +122,14 @@ export default ({ navigation }) => {
                                 name='car' 
                                 size={30} 
                                 color={
-                                    state.isCarChecked ? 'white' : commonStyles.colors.mainColor
+                                    state.vehicleType === 'CARRO' ? 'white' : commonStyles.colors.mainColor
                                 } 
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => dispatch({ type: 'MOTORCYCLE' })}
+                            onPress={() => dispatch({ type: 'VEHICLE_TYPE', vehicleType: 'MOTO' })}
                             style={
-                                [styles.button, state.isMotorcycleChecked ? 
+                                [styles.button, state.vehicleType === 'MOTO' ? 
                                 {backgroundColor: commonStyles.colors.mainColor} : 
                                 {
                                     backgroundColor: 'white',
@@ -146,7 +142,7 @@ export default ({ navigation }) => {
                                 name='two-wheeler' 
                                 size={50} 
                                 color={
-                                    state.isMotorcycleChecked ? 'white' : commonStyles.colors.mainColor
+                                    state.vehicleType === 'MOTO' ? 'white' : commonStyles.colors.mainColor
                                 }                         
                             />
                         </TouchableOpacity>
@@ -159,8 +155,8 @@ export default ({ navigation }) => {
                         onChangeText={text => dispatch({ 
                             type: 'LICENSE_PLATE',
                             licensePlate: text.toUpperCase(),
-                        })} 
-                        placeholder=''
+                        })}
+                        value={state.licensePlate}
                     />           
                     <LabelInput 
                         label='MODELO'
@@ -171,14 +167,14 @@ export default ({ navigation }) => {
                             type: 'VEHICLE_MODEL',
                             vehicleModel: text.toUpperCase(),
                         })} 
-                        placeholder=''
+                        value={state.vehicleModel}
                     />
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button                               
-                        title='Cadastrar Veículo'
+                        title={route.params ? 'Editar' : 'Cadastrar'}
                         disabled={!validForm}
-                        onPress={addVehicle}
+                        onPress={route.params ? editVehicle : addVehicle}
                     /> 
                 </View>
             </View> 
