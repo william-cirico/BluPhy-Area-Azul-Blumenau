@@ -53,7 +53,7 @@ def create_vehicle(
     return crud.create_vehicle(db, vehicle, user.user_id)
 
 
-@router.put('/{vehicle_id}')
+@router.put('/{vehicle_id}', response_model=schemas.Vehicle)
 def update_vehicle(
     vehicle_id: int,
     vehicle_update: schemas.VehicleUpdate,
@@ -64,7 +64,7 @@ def update_vehicle(
         for vehicle in user.vehicles:
             if vehicle.vehicle_id == vehicle_id:
                 crud.update_vehicle(db, vehicle_update, vehicle_id)
-                return {'message': 'Veículo atualizado com sucesso!'}
+                return crud.get_vehicle_by_id(db, vehicle_id)
     raise HTTPException(status_code=404, detail="O usuário não possui esse veículo")
 
 

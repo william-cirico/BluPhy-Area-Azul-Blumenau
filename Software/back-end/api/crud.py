@@ -177,6 +177,12 @@ def get_vehicle_by_license_plate(db: Session, license_plate: str):
         .first()
 
 
+def get_vehicle_by_id(db: Session, vehicle_id: int):
+    return db.query(models.Vehicle)\
+        .filter(models.Vehicle.vehicle_id == vehicle_id)\
+        .first()
+
+
 def get_last_parked_ticket_from_vehicle(db: Session, vehicle_id: int):
     return db.query(models.ParkingTicket)\
         .filter(models.ParkingTicket.vehicle_id == vehicle_id)\

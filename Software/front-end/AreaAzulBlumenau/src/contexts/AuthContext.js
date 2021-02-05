@@ -3,6 +3,7 @@ import React, { createContext, useReducer, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
+import Loading from '../screens/LoadingScreen';
 import { server, showErrorMessage } from '../utils/common';
 
 
@@ -39,24 +40,25 @@ export default ({ children }) => {
 
     useEffect(() => {        
         const loadStorageData = async () => {             
+            let userToken = null;
             try {
                 // Obtendo o token de autenticação do AsyncStorage
-                const userToken = await AsyncStorage.getItem('@auth_token');
+                userToken = await AsyncStorage.getItem('@auth_token');
                 // Validando o token
                 await axios(
                     `${server}/users/`,
                     {headers: {'Authorization': `bearer ${userToken}`}}
                 ); 
                 // Definindo o header de Authorization para as próximas requisições
-                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;
-                    // Salvando o estado
-                dispatch({ 
-                    type: 'RESTORE_TOKEN', 
-                    userToken: userToken, 
-                }); 
+                axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                
             } catch(e) {                
                 console.log(`Não foi possível restaurar o Token: ${e}`);
-            }             
+            }   
+            // Salvando o estado
+            dispatch({ 
+                type: 'RESTORE_TOKEN', 
+                userToken: userToken, 
+            });           
         }
         loadStorageData();
     }, []);
@@ -80,12 +82,6 @@ export default ({ children }) => {
                 
                 // Salvando o token recebido no AsyncStorage
                 AsyncStorage.setItem('@auth_token', userToken);                
-                // Obtendo os dados do usuário
-                await axios(
-                    `${server}/users/`,
-                    {headers: {'Authorization': `bearer ${userToken}`}}
-                );
-
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;
                 // Salvando o estado

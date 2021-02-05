@@ -10,7 +10,7 @@ import commonStyles from '../theme/commonStyles';
 import { licensePlateRegex } from '../utils/regExp';
 import {VehicleContext} from '../contexts/VehicleContext';
 
-export default ({ navigation, route }) => {    
+export default ({ navigation, route }) => {        
     const reducer = (prevState, action) => {        
         switch(action.type) {
             case 'VEHICLE_TYPE':
@@ -51,9 +51,9 @@ export default ({ navigation, route }) => {
 
     initialState = {        
         licensePlate: route.params ? route.params.licensePlate : '',
-        islicensePlateValid: false,
+        islicensePlateValid: !!route.params,
         vehicleModel: route.params ? route.params.vehicleModel : '',
-        isVehicleModelValid: false,
+        isVehicleModelValid: !!route.params,
         vehicleType: route.params ? route.params.vehicleType : 'CARRO',
     };
 
@@ -84,8 +84,8 @@ export default ({ navigation, route }) => {
 
     const { vehicleUpdate } = useContext(VehicleContext);
 
-    const editVehicle = () => {
-        vehicleUpdate(state.licensePlate, state.vehicleModel, state.vehicleType) &&
+    const editVehicle = vehicleId => {
+        vehicleUpdate(route.params.vehicleId, state.licensePlate, state.vehicleModel, state.vehicleType) &&
         Alert.alert(
             'Sucesso', 
             'Veículo editado com sucesso!',

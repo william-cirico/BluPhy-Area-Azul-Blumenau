@@ -45,8 +45,16 @@ export default ({ children }) => {
     };
 
     const vehicleUpdate = async (vehicleId, licensePlate, model, vehicleType) => {
+        console.log(vehicleId, licensePlate, model, vehicleType)
         try {
-            const res = await axios.put(`${server}/vehicles/${vehicleId}`)
+            const res = await axios.put(
+                `${server}/vehicles/${vehicleId}`,
+                {
+                    license_plate: licensePlate,
+                    model: model,
+                    vehicle_type: vehicleType,
+                }
+            )
             const updatedVehicle = res.data;
             const filteredVehicles = vehicles.filter(v => v.vehicle_id !== vehicleId);
             setVehicles([...filteredVehicles, updatedVehicle]);

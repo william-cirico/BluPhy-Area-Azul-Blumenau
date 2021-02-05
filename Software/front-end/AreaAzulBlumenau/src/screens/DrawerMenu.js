@@ -70,7 +70,7 @@ export default props => {
                             )}
                             label='Editar Veículos'
                             inactiveTintColor='black'
-                            onPress={() => {props.navigation.navigate('VehicleRegisterScreen', {title: 'Editar Veículos'})}}                                                            
+                            onPress={() => {props.navigation.navigate('VehicleEditScreen')}}                                                            
                         />  :
                         <DrawerItem 
                             icon={({color, size}) => (
