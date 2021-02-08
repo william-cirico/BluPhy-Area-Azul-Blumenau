@@ -17,7 +17,7 @@ export default ({ children }) => {
                     isLoading: false,
                     userData: action.userData,
                 }
-            case 'USER_CHANGE':
+            case 'CHANGE_USER':
                 return {
                     ...prevState,
                     userData: action.userData,
@@ -37,26 +37,29 @@ export default ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                res = await axios(`${server}/users/`);
+    const loadUser = async () => {
+        try {
+            res = await axios(`${server}/users/`);                            
+            dispatch({type: 'RESTORE_USER', userData: res.data})
+        } catch(e) {
+            showErrorMessage(e);
+        }            
+    };
 
-            dispatch({type: 'RESTORE_TOKEN', userData: res.data})
-            } catch(e) {
-                showErrorMessage(e);
-            }            
-        };
-
+    useEffect(() => {        
         loadUser();
-    });
-
+    }, []);
+    
     if (state.isLoading) {
         return <Loading />
     }
 
     return (
-        <UserContext.Provider value={{userData: state.userData, userDispatch: dispatch}}>
+        <UserContext.Provider value={{
+            userData: state.userData, 
+            loadUser, 
+            clearUser: () => dispatch({ type: 'SIGN_OUT'})
+        }}>
             {children}
         </UserContext.Provider>
     )

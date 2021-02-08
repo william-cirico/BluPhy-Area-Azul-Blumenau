@@ -21,8 +21,12 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_vehicle(db: Session, vehicle: schemas.VehicleCreate, user_id):
-    db_vehicle = models.Vehicle(**vehicle.dict(), user_id=user_id)
+def create_vehicle(db: Session, vehicle: schemas.VehicleCreate, is_active: bool, user_id):
+    db_vehicle = models.Vehicle(
+        **vehicle.dict(),
+        is_active=is_active,
+        user_id=user_id
+    )
     db.add(db_vehicle)
     db.commit()
     db.refresh(db_vehicle)
@@ -148,15 +152,18 @@ def update_is_parked_vehicle(db: Session, vehicle_id: int, is_parked: bool):
     db.commit()
 
 
+def update_is_active_vehicle(db: Session, vehicle_id: int, is_active: bool):
+    db.query(models.Vehicle)\
+        .filter(models.Vehicle.vehicle_id == vehicle_id)\
+        .update({models.Vehicle.is_active: is_active})
+    db.commit()
+
+
 def update_end_time_parking_ticket(db: Session, parking_ticket_id: int):    
     db.query(models.ParkingTicket)\
         .filter(models.ParkingTicket.parking_ticket_id == parking_ticket_id)\
         .update({models.ParkingTicket.end_time: datetime.now()})
     db.commit()
-
-
-def get_user_by_cpf(db: Session, document_number: str):
-    return db.query(models.User).filter(models.User.document_number == document_number).first()
 
 
 def get_user_by_email(db: Session, email: str):
@@ -168,7 +175,15 @@ def get_traffic_warden_by_email(db: Session, email: str):
 
 
 def get_admin_by_email(db: Session, email: str):
-    return db.query(models.Admin). filter(models.Admin.email == email).first()
+    return db.query(models.Admin)\
+        .filter(models.Admin.email == email).first()
+
+
+def get_vehicles_by_user_id(db: Session, user_id: int):
+    return db.query(models.Vehicle)\
+        .filter(models.Vehicle.user_id == user_id)\
+        .order_by(models.Vehicle.license_plate)\
+        .all()
 
 
 def get_vehicle_by_license_plate(db: Session, license_plate: str):

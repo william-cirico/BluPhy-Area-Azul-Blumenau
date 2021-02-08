@@ -5,22 +5,22 @@ import { ActivityIndicator, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import AuthProvider, { AuthContext } from './contexts/AuthContext';
+import UserProvider from './contexts/UserContext';
+import VehicleProvider from './contexts/VehicleContext';
 import AppRoutes from './routes/AppRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 
 const Router = () => {
-    const {userToken, isLoading} = useContext(AuthContext);
-
-    if (isLoading) {
-        return (
-			<View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-				<ActivityIndicator size="large" color="black" />
-			</View>
-		);
-    }
+    const {userToken} = useContext(AuthContext);
 
     if (userToken) {
-        return <AppRoutes />
+        return (
+            <UserProvider>
+                <VehicleProvider>
+                    <AppRoutes />
+                </VehicleProvider>
+            </UserProvider>
+        )        
     }
 
     return <AuthRoutes />

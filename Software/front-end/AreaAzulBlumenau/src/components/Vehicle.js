@@ -1,23 +1,66 @@
-import React, { useContext } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import axios from 'axios';
+
 
 import commonStyles from '../theme/commonStyles';
 import { VehicleContext } from '../contexts/VehicleContext';
+import { server, showErrorMessage } from '../utils/common';
+import Timer from './Timer';
 
-export default props => {
-    [isLeftButtonShown, setIsLeftButtonShown] = useState(false);
-    [isParked, setIsParked] = useState(false);
+export default props => { 
+    const [timer, setTimer] = useState(null);     
 
-    const { vehicleDelete } = useContext(VehicleContext);
+    useEffect(() => {
+        const loadTimer = async () => {
+            if (props.is_parked) {
+                try {
+                    const res = await axios.get(`${server}/vehicles/parking-time/${props.vehicle_id}`);                    
+                    const time = new Date(res.data.end_time);                    
+                    setTimer(time);                
+                } catch(e) {
+                    console.log(e);
+                }
+            }
+            console.log(timer)
+        };
+
+        loadTimer();
+    }, []);
+
+    const { deleteVehicle, loadVehicles } = useContext(VehicleContext);
+
+    const cancelParking = () => {
+        Alert.alert(
+            'Cancelar Ticket', 
+            'Você tem certeza que deseja cancelar o ticket de estacionamento?',
+            [
+                {
+                    text: 'Sim', 
+                    onPress: async () => {
+                        try {
+                            await axios.delete(`${server}/parking-tickets/${props.vehicle_id}`);
+                            setTimer(null);
+                            loadVehicles();                            
+                        } catch(e) {
+                            showErrorMessage(e);
+                        }
+                    }
+                },
+                {
+                    text: 'Não'
+                }
+            ]
+        );
+    }
 
     const getLeftContent = () => {                   
         return (
             <TouchableOpacity
-                onPress={() => vehicleDelete(props.vehicleId)} 
+                onPress={() => deleteVehicle(props.vehicle_id)} 
                 style={styles.left}   
             >
                 <Icon 
@@ -30,20 +73,24 @@ export default props => {
     };
 
     return (  
-        <View style={styles.container}>
+        <View style={[styles.container, !props.is_active && {borderLeftColor: '#ccc'}]}>
             <Swipeable                
                 renderLeftActions={getLeftContent}          
             >
                 <View style={styles.innerContainer}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.licensePlateText}>{props.licensePlate}</Text>
-                        <Text style={styles.carModelText}>{props.carModel}</Text>
+                        <Text style={[styles.licensePlateText, !props.is_active && {color: '#aaa'}]}>{props.license_plate}</Text>
+                        <Text style={[styles.carModelText, !props.is_active && {color: '#ccc'}]}>{props.model}</Text>
                     </View>
                     <TouchableOpacity
-                        onPress={props.parkCar}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>{isParked ? 'ESTACIONADO' : 'ESTACIONAR'}</Text>
+                        onPress={props.is_parked ? cancelParking : props.parkCar}
+                        style={[styles.button, !props.is_active && {backgroundColor: '#ccc'}]}
+                        disabled={!props.is_active}
+                    > 
+                        {timer ? 
+                            <Timer expiryTimestamp={timer} style={styles.buttonText}/> :
+                            <Text style={styles.buttonText}>Estacionar</Text>
+                        }                                                
                     </TouchableOpacity>                
                 </View>
             </Swipeable> 

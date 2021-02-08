@@ -39,11 +39,10 @@ export default ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {        
-        const loadStorageData = async () => {             
-            let userToken = null;
+        const loadStorageData = async () => {                         
             try {
                 // Obtendo o token de autenticação do AsyncStorage
-                userToken = await AsyncStorage.getItem('@auth_token');
+                const userToken = await AsyncStorage.getItem('@auth_token');                
                 // Validando o token
                 await axios(
                     `${server}/users/`,
@@ -51,14 +50,18 @@ export default ({ children }) => {
                 ); 
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                
-            } catch(e) {                
-                console.log(`Não foi possível restaurar o Token: ${e}`);
+                dispatch({ 
+                    type: 'RESTORE_TOKEN', 
+                    userToken: userToken, 
+                });           
+            } catch(e) {  
+                await AsyncStorage.removeItem('@auth_token');
+                dispatch({ 
+                    type: 'RESTORE_TOKEN', 
+                    userToken: null, 
+                });           
             }   
-            // Salvando o estado
-            dispatch({ 
-                type: 'RESTORE_TOKEN', 
-                userToken: userToken, 
-            });           
+            
         }
         loadStorageData();
     }, []);
@@ -107,8 +110,12 @@ export default ({ children }) => {
         },
     }), []);
 
+    if (state.isLoading) {
+        return <Loading />
+    }
+
     return (
-        <AuthContext.Provider value={{userToken: state.userToken, isLoading: state.isLoading, authContext: authContext}}>
+        <AuthContext.Provider value={{userToken: state.userToken, authContext: authContext}}>
             {children}
         </AuthContext.Provider>
     );

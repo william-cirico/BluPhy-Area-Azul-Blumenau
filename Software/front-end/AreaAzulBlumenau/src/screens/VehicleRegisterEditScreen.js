@@ -66,10 +66,10 @@ export default ({ navigation, route }) => {
 
     const validForm = validations.reduce((acc, cv) => acc && cv);
 
-    const { vehicleCreate } = useContext(VehicleContext);
+    const { createVehicle } = useContext(VehicleContext);
 
     const addVehicle = () => {                
-        vehicleCreate(state.licensePlate, state.vehicleModel, state.vehicleType) &&
+        createVehicle(state.licensePlate, state.vehicleModel, state.vehicleType) &&
         Alert.alert(
             'Sucesso', 
             'Veículo cadastrado com sucesso!',
@@ -82,17 +82,17 @@ export default ({ navigation, route }) => {
         );             
     }
 
-    const { vehicleUpdate } = useContext(VehicleContext);
+    const { updateVehicle } = useContext(VehicleContext);
 
-    const editVehicle = vehicleId => {
-        vehicleUpdate(route.params.vehicleId, state.licensePlate, state.vehicleModel, state.vehicleType) &&
+    const editVehicle = () => {
+        updateVehicle(route.params.vehicleId, state.licensePlate, state.vehicleModel, state.vehicleType) &&
         Alert.alert(
             'Sucesso', 
             'Veículo editado com sucesso!',
             [
                 {
                     title: 'Ok',
-                    onPress: () => navigation.push('MainScreen')
+                    onPress: () => navigation.navigate('MainScreen')
                 }
             ]
         ); 

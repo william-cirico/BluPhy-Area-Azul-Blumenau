@@ -9,32 +9,16 @@ import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
 import { VehicleContext } from '../contexts/VehicleContext';
-
+import { UserContext } from '../contexts/UserContext';
+ 
 export default ({ navigation }) => {       
     const { vehicles } = useContext(VehicleContext);
+    const { balance } = useContext(UserContext).userData;
     
-    const [balance, setBalance] = useState(0);
 
-    const [isLoading, setIsLoading] = useState(true);
-
-    const parkCar = vehicle_id => {
-        navigation.navigate('ParkScreen', {vehicle_id: vehicle_id});
+    const parkCar = vehicleId => {
+        navigation.navigate('ParkScreen', {vehicleId: vehicleId});
     };
-
-    useEffect(() => {
-        const loadUserBalance = async () => {
-            try {                                                              
-                balance_res = await axios(
-                    `${server}/users/balance`
-                );                
-                setBalance(balance_res.data.balance);                               
-                setIsLoading(false);
-            } catch(e) {
-                showErrorMessage(e);
-            }
-        }        
-        loadUserBalance();
-    }, []);
 
     return (
         <View style={styles.container}>
@@ -47,28 +31,23 @@ export default ({ navigation }) => {
                     <Icon name='bars' size={30} color={commonStyles.colors.mainColor} />
                 </TouchableOpacity>                                
             </View>
-            <View style={styles.balanceContainer}>
-                    {isLoading ? 
-                        <ActivityIndicator color={commonStyles.colors.mainColor} size='large' /> :
-                        <Text style={styles.balanceText}>R$ {balance.toFixed(2)}</Text>
-                    }
-                    
-                    <TouchableOpacity
-                        style={styles.rechargeButton}
-                        activeOpacity={0.9}
-                        onPress={() => navigation.navigate('RechargeScreen')}
-                    >
-                        <Icon name='plus' size={30} color='white' />
-                    </TouchableOpacity>
+            <View style={styles.balanceContainer}>                        
+                <Text style={styles.balanceText}>R$ {balance.toFixed(2)}</Text>
+                
+                <TouchableOpacity
+                    style={styles.rechargeButton}
+                    activeOpacity={0.7}                    
+                    onPress={() => navigation.push('RechargeScreen')}
+                >
+                    <Icon name='plus' size={30} color='white' />
+                </TouchableOpacity>
             </View>
             <View style={styles.body}>
                 {vehicles ? 
                     <FlatList
                         data={vehicles}
                         renderItem={({ item }) => <Vehicle
-                            vehicleId={item.vehicle_id} 
-                            licensePlate={item.license_plate} 
-                            carModel={item.model} 
+                            {...item} 
                             parkCar={() => {parkCar(item.vehicle_id)}} />
                         } 
                         keyExtractor={item => item.vehicle_id + ''}                                   
@@ -79,7 +58,7 @@ export default ({ navigation }) => {
                 <Button 
                     title='Adicionar Veículo'
                     disabled={false}
-                    onPress={() => navigation.push('VehicleRegisterScreen')}                             
+                    onPress={() => navigation.push('VehicleRegisterEditScreen')}                             
                 />
             </View>
         </View>

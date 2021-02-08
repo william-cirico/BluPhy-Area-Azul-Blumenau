@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { 
     ActivityIndicator,
     Dimensions, 
@@ -11,12 +11,15 @@ import {
 } from 'react-native';
 
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
+import Geolocation from 'react-native-geolocation-service';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
 import { server, showErrorMessage } from '../utils/common';
 import commonStyles from '../theme/commonStyles';
 import Button from '../components/Button';
+import { VehicleContext } from '../contexts/VehicleContext';
+import { UserContext } from '../contexts/UserContext';
 
 export default ({ navigation, route }) => {
     const reducer = (prevState, action) => {
@@ -84,16 +87,29 @@ export default ({ navigation, route }) => {
         );
     };
 
+    const { loadVehicles } = useContext(VehicleContext);
+    const { loadUser } = useContext(UserContext);
+
     const confirmParking = async () => {
         try {
             const location = `${state.markerPosition.latitude} ${state.markerPosition.longitude}`
             await axios.post(
                 `${server}/parking-tickets/${route.params.vehicleId}`,
                 {location: location, parking_time: state.parkingTime}
-            )                       
-            Alert.alert('Sucesso', 'Veículo estacionado com sucesso!')            
-            navigation.navigate('MainScreen');
-        } catch(e) {
+            )   
+            
+            loadVehicles();
+            loadUser();
+
+            Alert.alert(
+                'Sucesso', 
+                'Veículo estacionado com sucesso!',
+                [{
+                    text: 'OK',
+                    onPress: () => navigation.push('MainScreen')
+                }]
+            );            
+        } catch(e) {            
             showErrorMessage(e);
         }
     };

@@ -89,7 +89,6 @@ async def check_verification_code(
     return {'message': 'Código de verificação validado'}
 
 
-
 @router.put('/change-password/{email}')
 async def change_password(
         email: str,

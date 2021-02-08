@@ -20,6 +20,7 @@ class VehicleUpdate(VehicleBase):
 
 class Vehicle(VehicleBase):
     vehicle_id: int
+    is_active: bool
     user_id: int
 
     class Config:
@@ -61,7 +62,8 @@ class UserUpdate(UserBase):
 class User(UserBase):
     user_id: int
     email: str
-    balance: float    
+    balance: float
+    vehicles: List[Vehicle]
 
     class Config:
         orm_mode = True

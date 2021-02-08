@@ -9,37 +9,15 @@ import axios from 'axios';
 
 import { server, showErrorMessage } from '../utils/common';
 import { AuthContext } from '../contexts/AuthContext';
+import { VehicleContext } from '../contexts/VehicleContext';
+import { UserContext } from '../contexts/UserContext';
 import commonStyles from '../theme/commonStyles';
 
 
 export default props => {    
-    const { authContext } = useContext(AuthContext);   
-    const [userData, setUserData] = useState({});
-    const [vehicles, setVehicles] = useState([]);
-
-    useEffect(() => {
-        const loadUserData = async () => {
-            try {
-                const res = await axios(
-                    `${server}/users/`
-                );
-                setUserData(res.data);                
-            } catch(e) {
-                console.log(e);
-            }
-        }
-        const loadVehicles = async () => {
-            try {
-                res = await axios(`${server}/vehicles/`);                
-                setVehicles(res.data);                                
-            } catch(e) {
-                showErrorMessage(e);
-            }
-        };
-        
-        loadUserData();
-        loadVehicles();        
-    }, [])
+    const { authContext } = useContext(AuthContext); 
+    const { vehicles, clearVehicle } = useContext(VehicleContext);  
+    const { userData, clearUser } = useContext(UserContext);
 
     return (
         <View style={styles.container}>
@@ -59,7 +37,7 @@ export default props => {
                         label='Editar perfil'
                         onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email})}}                                                
                     /> 
-                    {!!vehicles ?
+                    {vehicles ?
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
@@ -95,7 +73,11 @@ export default props => {
                         )}
                         inactiveTintColor='black'
                         label='Sair'
-                        onPress={authContext.signOut}                        
+                        onPress={() => {
+                            clearUser();
+                            clearVehicle();
+                            authContext.signOut();
+                        }}                        
                     />                        
                 </View>
         </View>

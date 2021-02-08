@@ -17,7 +17,7 @@
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
     "axios": "^0.21.1",
-    "react": "16.13.1",
+    "react": "^16.13.1",
     "react-native": "0.63.4",
     "react-native-autocomplete-input": "^4.2.0",
     "react-native-geolocation-service": "^5.1.1",
@@ -26,7 +26,8 @@
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.16.1",
-    "react-native-vector-icons": "^7.1.0"
+    "react-native-vector-icons": "^7.1.0",
+    "react-timer-hook": "^2.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

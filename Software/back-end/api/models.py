@@ -27,6 +27,7 @@ class Vehicle(Base):
     license_plate = Column(String, index=True)
     model = Column(String)
     vehicle_type = Column(String)
+    is_active = Column(Boolean)
     is_parked = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
