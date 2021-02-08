@@ -44,7 +44,7 @@ class ParkingTicket(Base):
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     price = Column(Float)
-    vehicle_id = Column(Integer, ForeignKey("vehicles.vehicle_id"))
+    vehicle_id = Column(Integer, ForeignKey("vehicles.vehicle_id", ondelete='cascade'))
 
     vehicle = relationship("Vehicle", back_populates="parking_ticket")
 
