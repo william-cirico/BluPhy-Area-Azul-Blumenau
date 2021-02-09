@@ -34,7 +34,7 @@ const MainScreenDrawer = ({ navigation }) => (
 
 export default ({ navigation }) => (        
     <AppStack.Navigator
-        initialRouteName='CardEditScreen'
+        initialRouteName='MainScreen'
         screenOptions={commonStyles.screenOptionsLayout}
     >
         <AppStack.Screen 

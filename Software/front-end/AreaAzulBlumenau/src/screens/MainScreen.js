@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useContext } from 'react';
+import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
 
-import { server, showErrorMessage } from '../utils/common';
 import commonStyles from '../theme/commonStyles';
 import Vehicle from '../components/Vehicle';
 import Button from '../components/Button';
@@ -14,8 +12,7 @@ import { UserContext } from '../contexts/UserContext';
 export default ({ navigation }) => {       
     const { vehicles } = useContext(VehicleContext);
     const { balance } = useContext(UserContext).userData;
-    
-
+        
     const parkCar = vehicleId => {
         navigation.navigate('ParkScreen', {vehicleId: vehicleId});
     };

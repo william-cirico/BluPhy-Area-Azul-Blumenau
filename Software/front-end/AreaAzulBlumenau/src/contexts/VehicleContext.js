@@ -15,12 +15,7 @@ export default ({ children }) => {
                     ...prevState,
                     isLoading: false,
                     vehicles: action.vehicles,
-                }
-            case 'CHANGE_VEHICLES':
-                return {
-                    ...prevState,
-                    vehicles: action.vehicles,
-                }            
+                }          
             case 'SIGN_OUT':
                 return {
                     ...prevState,
@@ -64,9 +59,7 @@ export default ({ children }) => {
                 }
             );
 
-            newVehicle = res.data;
-            
-            dispatch({ type: 'CHANGE_VEHICLES', vehicles: [...state.vehicles, newVehicle] });                        
+            loadVehicles();
             return true;
         } catch(e) {
             showErrorMessage(e);
@@ -83,10 +76,8 @@ export default ({ children }) => {
                     vehicle_type: vehicleType,
                 }
             )
-            const updatedVehicle = res.data;
-            const filteredVehicles = state.vehicles.filter(v => v.vehicle_id !== vehicleId);
-            dispatch({ type: 'CHANGE_VEHICLES', vehicles: [...filteredVehicles, updatedVehicle]});            
-
+            
+            loadVehicles();
             return true;
         } catch(e) {
             showErrorMessage(e);
@@ -96,8 +87,8 @@ export default ({ children }) => {
     const deleteVehicle = async vehicleId => {
         try {
             await axios.delete(`${server}/vehicles/${vehicleId}`);
-            const filteredVehicles = state.vehicles.filter(v => v.vehicle_id !== vehicleId);
-            dispatch({ type: 'CHANGE_VEHICLES', vehicles: filteredVehicles });            
+            
+            loadVehicles();            
         } catch(e) {            
             showErrorMessage(e);
         }
