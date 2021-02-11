@@ -9,21 +9,6 @@ import commonStyles from '../theme/commonStyles';
 import { server, showErrorMessage } from '../utils/common';
 
 export default ({ navigation, route }) => {
-    const [link, setLink]= useState();
-
-    const paymentByBillet = async () => {
-        try {
-            res = await axios.post(`${server}/recharges/?amount=${10}`);
-
-            setLink(res.data.link);
-        } catch(e) {
-            showErrorMessage(e);
-        }
-    };
-
-    if (link) {
-        return <WebView source={{ uri: link }} />        
-    }
 
     return (
         <View style={styles.container}>            

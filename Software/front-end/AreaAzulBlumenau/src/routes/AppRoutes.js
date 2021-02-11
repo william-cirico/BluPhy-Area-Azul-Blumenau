@@ -9,7 +9,6 @@ import MainScreen from '../screens/MainScreen';
 import VehicleRegisterEditScreen from '../screens/VehicleRegisterEditScreen';
 import RechargeScreen from '../screens/RechargeScreen';
 import ParkScreen from '../screens/ParkScreen';
-import PaymentScreen from '../screens/PaymentScreen';
 import DrawerMenu from '../screens/DrawerMenu';
 import VehicleEditScreen from '../screens/VehicleEditScreen';
 import commonStyles from '../theme/commonStyles';
@@ -34,7 +33,7 @@ const MainScreenDrawer = ({ navigation }) => (
 
 export default ({ navigation }) => (        
     <AppStack.Navigator
-        initialRouteName='PaymentScreen'
+        initialRouteName='MainScreen'
         screenOptions={commonStyles.screenOptionsLayout}
     >
         <AppStack.Screen 
@@ -66,11 +65,6 @@ export default ({ navigation }) => (
             name='VehicleEditScreen' 
             component={VehicleEditScreen} 
             options={{ title: 'Editar veículos' }}
-        />
-        <AppStack.Screen
-            name='PaymentScreen'
-            component={PaymentScreen}
-            options={{title: 'Forma de Pagamento'}}
         />
     </AppStack.Navigator>  
 );

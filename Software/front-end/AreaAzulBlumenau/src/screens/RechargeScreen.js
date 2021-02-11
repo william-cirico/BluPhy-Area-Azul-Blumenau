@@ -1,11 +1,42 @@
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import axios from 'axios';
+import { WebView } from 'react-native-webview';
+
 import Button from '../components/Button';
+import Loading from '../screens/LoadingScreen';
 import commonStyles from '../theme/commonStyles';
+import { server, showErrorMessage } from '../utils/common';
 
 export default ({ navigation, route }) => {
     const [value, setValue] = useState(7.5);
+    const [link, setLink]= useState();
+    const [loading, setLoading] = useState(false);
+
+    const paymentByBillet = async value => {
+        setLoading(true);
+        try {
+            res = await axios.post(`${server}/recharges/?amount=${value}`);
+
+            setLink(res.data.link);
+        } catch(e) {
+            showErrorMessage(e);
+        }
+        setLoading(false);
+    };
+
+    if (loading) {
+        return <Loading />
+    }
+
+    if (link) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+                <WebView source={{ uri: link }} /> 
+            </View>
+        );       
+    }
 
     return (
         <View style={styles.container}>
@@ -91,7 +122,7 @@ export default ({ navigation, route }) => {
                 <Button 
                     title='Pagar'
                     disabled={false}                
-                    onPress={() => navigation.push('PaymentScreen', {value: value})}
+                    onPress={() => paymentByBillet(value)}
                 />
             </View>
         </View>

@@ -37,7 +37,7 @@ export default ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const loadUser = async () => {
+    const loadUser = async () => {        
         try {
             res = await axios(`${server}/users/`);                            
             dispatch({type: 'RESTORE_USER', userData: res.data})
@@ -46,7 +46,31 @@ export default ({ children }) => {
         }            
     };
 
+    // const checkIfHasRecharges = async () => {        
+    //     try {
+    //         await axios(`${server}/recharges/verify`);
+
+    //         return true
+    //     } catch(e) {
+    //         return false
+    //     }
+    // };
+
+    // const checkPayments = async () => {
+    //     try {
+    //         res = await axios(`${server}/recharges/`)
+    //     } catch(e) {
+
+    //     }
+    // }
+
+    // const check
+
     useEffect(() => {        
+        // if (checkIfHasRecharges()) {
+        //     setInterval(checkPayments, 60000);
+        // }
+
         loadUser();
     }, []);
     

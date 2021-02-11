@@ -12,7 +12,6 @@ export default ({ expiryTimestamp, style }) => {
         seconds,
         minutes,
         hours,
-        pause
     } = useTimer({ 
         expiryTimestamp, 
         onExpire: loadVehicles

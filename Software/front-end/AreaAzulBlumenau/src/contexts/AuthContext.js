@@ -10,7 +10,7 @@ import { server, showErrorMessage } from '../utils/common';
 const AuthContext = createContext();
 
 export default ({ children }) => {
-    const initialState = {
+    const initialState = {        
         isLoading: true,        
         userToken: null,
     };
@@ -60,8 +60,7 @@ export default ({ children }) => {
                     type: 'RESTORE_TOKEN', 
                     userToken: null, 
                 });           
-            }   
-            
+            }               
         }
         loadStorageData();
     }, []);

@@ -68,11 +68,23 @@ def create_charge_by_billet(
     return {'link': billet_link}
 
 
+@router.get('/verify', status_code=204)
+def user_has_recharges(
+    user: schemas.User = Security(get_current_user, scopes=['user']),    
+    db: Session = Depends(get_db)
+):
+    if not crud.get_unpaid_recharges_by_user_id(db, user.user_id):
+        raise HTTPException(status_code=404)
+
+    return Response(status_code=204)
+
+
+
 @router.get('/', status_code=204)
 def check_recharge_payment(
-        user: schemas.User = Security(get_current_user, scopes=['user']),
-        access_token: str = Depends(get_access_token),
-        db: Session = Depends(get_db)
+    user: schemas.User = Security(get_current_user, scopes=['user']),
+    access_token: str = Depends(get_access_token),
+    db: Session = Depends(get_db)
 ):
     unpaid_recharges = crud.get_unpaid_recharges_by_user_id(db, user.user_id)
 
