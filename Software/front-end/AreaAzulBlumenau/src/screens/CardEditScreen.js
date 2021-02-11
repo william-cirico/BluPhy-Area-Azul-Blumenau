@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -9,7 +9,10 @@ export default props => {
 
     return (
         <View style={styles.container}>
-            <View style={{flex: 3, justifyContent: 'center'}}>
+            <KeyboardAvoidingView style={{flex: 3, justifyContent: 'center', marginBottom: 25,}}
+                behavior='height'
+            >
+                
                 <Input 
                     placeholder='Número do cartão'
                 />
@@ -29,7 +32,7 @@ export default props => {
                 <Input 
                     placeholder='CPF'
                 />
-            </View>
+            </KeyboardAvoidingView>
             <View style={{ flex: 1, justifyContent: 'flex-end'}}>
                 <Button 
                     title='Editar Cartão'                

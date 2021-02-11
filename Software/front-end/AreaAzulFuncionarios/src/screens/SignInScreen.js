@@ -15,6 +15,7 @@ export default () => {
                 <View style={styles.logoContainer}>
                     <Image
                         style={styles.logo}
+                        source={require('../img/logoFuncionarios.png')}
                     />
                 </View>
             </View>
