@@ -10,6 +10,8 @@ target 'AreaAzulBlumenau' do
 
   pod 'RNJuno', :path => '../node_modules/react-native-juno'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'AreaAzulBlumenauTests' do
     inherit! :complete
     # Pods for testing

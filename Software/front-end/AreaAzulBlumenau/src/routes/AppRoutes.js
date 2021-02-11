@@ -34,7 +34,7 @@ const MainScreenDrawer = ({ navigation }) => (
 
 export default ({ navigation }) => (        
     <AppStack.Navigator
-        initialRouteName='MainScreen'
+        initialRouteName='PaymentScreen'
         screenOptions={commonStyles.screenOptionsLayout}
     >
         <AppStack.Screen 
@@ -56,8 +56,7 @@ export default ({ navigation }) => (
             name='ParkScreen' 
             component={ParkScreen} 
             options={{ title: 'Estacionar' }}
-        />
-        <AppStack.Screen name='PaymentScreen' component={PaymentScreen} />                    
+        />                   
         <AppStack.Screen 
             name='UserEditScreen' 
             component={UserEditScreen}
@@ -67,6 +66,11 @@ export default ({ navigation }) => (
             name='VehicleEditScreen' 
             component={VehicleEditScreen} 
             options={{ title: 'Editar veículos' }}
+        />
+        <AppStack.Screen
+            name='PaymentScreen'
+            component={PaymentScreen}
+            options={{title: 'Forma de Pagamento'}}
         />
     </AppStack.Navigator>  
 );
