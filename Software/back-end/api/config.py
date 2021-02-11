@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     jwt_algorithm: str
     secret_key: str
     sqlalchemy_database_url: str
+    username_juno: str
+    password_juno: str
+    x_resource_token: str
 
     class Config:
         env_file = '.env'

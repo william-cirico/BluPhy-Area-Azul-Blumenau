@@ -14,6 +14,7 @@ class User(Person, Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
+    document = Column(String, unique=True)
     balance = Column(Float, default=0.00)
 
     vehicles = relationship("Vehicle", back_populates="owner")
@@ -52,10 +53,10 @@ class ParkingTicket(Base):
 class Recharge(Base):
     __tablename__ = "recharges"
 
-    recharge_id = Column(Integer, primary_key=True, index=True)
+    recharge_id = Column(String, primary_key=True, index=True)
     date = Column(DateTime)
     value = Column(Float)
-    payment_status = Column(Boolean)
+    is_paid = Column(Boolean)
     payment_type = Column(String)
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
@@ -68,7 +69,7 @@ class Billet(Base):
 
     billet_id = Column(Integer, primary_key=True, index=True)
     billet_link = Column(String)
-    recharge_id = Column(Integer, ForeignKey("recharges.recharge_id"))
+    recharge_id = Column(String, ForeignKey("recharges.recharge_id", ondelete='cascade'))
 
     recharge = relationship("Recharge", back_populates="billet")
 

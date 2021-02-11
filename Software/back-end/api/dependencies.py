@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
+import requests
 
 
 from .database import SessionLocal
@@ -20,6 +21,53 @@ oauth2_scheme = OAuth2PasswordBearer(
 )
 
 
+ACCESS_TOKEN = 'bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJibHVwaHlzaXN0ZW1hc0BnbWFpbC' \
+               '5jb20iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNjEzMDc0NjUyLCJqdGkiOiJ0UWltT2J4SVdEWnpPZ1MzZ' \
+               'DlybDItR3c3QVkiLCJjbGllbnRfaWQiOiJ5MzIwMUVvZGRQRVJ5bkZjIn0.VX_evzYeMZ_q2ZO60LUN0Oqj' \
+               'lceHas1qvEBhDCCB_9jt_CL2FFWRo_exIdjhG0NwSqZShfnRk-5XVAwyM4OIQ_1mUPTXtsmGMVevEiUz4YW' \
+               'c6j0_7RpmQGjxSndpey7L_kyh_HQDj1EEo-kH6DXZAJ_kYntQjM0WIZ9Cm-X5qPkWBiIqjOqFcmX4vBcpm5' \
+               'mYcS0tgDHeVsNEocvlNLzFRkCuWu99PH16hg6lKsZ5SlqRhwcrIHfLeFvxImUk0Aq06fnfVFfolxNdGsgcX' \
+               'LilhAba3mSvF1huoJyxb0lQlSe0bBMg786RmLqlSHiWlBkDbVkEaiFHaGaXcJdDo7SvUA'
+
+
+def is_access_token_valid():
+    """
+    Verifica se o ACCESS_TOKEN ainda é válido.
+    """
+    headers = {
+        'X-Api-Version': '2',
+        'X-Resource-Token': settings.x_resource_token,
+        'Authorization': ACCESS_TOKEN
+    }
+
+    r = requests.get(
+        'https://sandbox.boletobancario.com/api-integration/digital-accounts',
+        headers=headers
+    )
+
+    return r.status_code == 200
+
+
+def get_access_token():
+    """
+    Retorna o ACCESS_TOKEN
+    """
+    global ACCESS_TOKEN
+
+    if ACCESS_TOKEN and is_access_token_valid():
+        return ACCESS_TOKEN
+
+    r = requests.post(
+        'https://sandbox.boletobancario.com/authorization-server/oauth/token',
+        auth=(settings.username_juno, settings.password_juno),
+        data={'grant_type': 'client_credentials'}
+    )
+
+    ACCESS_TOKEN = r.json()['access_token']
+
+    return f'bearer {ACCESS_TOKEN}'
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -28,7 +76,7 @@ def get_db():
         db.close()
 
 
-async def get_current_user(
+def get_current_user(
         security_scopes: SecurityScopes,
         token: str = Depends(oauth2_scheme),
         db: Session = Depends(get_db)

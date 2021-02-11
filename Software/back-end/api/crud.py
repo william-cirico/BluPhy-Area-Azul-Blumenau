@@ -12,8 +12,9 @@ def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(
         name=user.name,
-        email=user.email,        
-        password=hashed_password,        
+        email=user.email,
+        document=user.document,
+        password=hashed_password
     )
     db.add(db_user)
     db.commit()
@@ -39,6 +40,12 @@ def create_recharge(db: Session, recharge: schemas.RechargeCreate, user_id):
     db.commit()
     db.refresh(db_recharge)
     return db_recharge
+
+
+def create_billet(db: Session, billet_link: str, recharge_id: str):
+    db_billet = models.Billet(billet_link=billet_link, recharge_id=recharge_id)
+    db.add(db_billet)
+    db.commit()
 
 
 def create_parking_ticket(
@@ -166,6 +173,13 @@ def update_end_time_parking_ticket(db: Session, parking_ticket_id: int):
     db.commit()
 
 
+def update_recharge_status(db: Session, recharge_id: str):
+    db.query(models.Recharge)\
+        .filter(models.Recharge.recharge_id == recharge_id)\
+        .update({models.Recharge.is_paid: True})
+    db.commit()
+
+
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
@@ -211,6 +225,13 @@ def get_password_redefine_requisition(db: Session, email: str):
         .first()
 
 
+def get_unpaid_recharges_by_user_id(db: Session, user_id: int):
+    return db.query(models.Recharge)\
+        .filter(models.Recharge.user_id == user_id)\
+        .filter(models.Recharge.is_paid == False)\
+        .all()
+
+
 def delete_vehicle(db: Session, vehicle_id: int):
     db.query(models.Vehicle).filter(models.Vehicle.vehicle_id == vehicle_id).delete()
     db.commit()
@@ -221,3 +242,11 @@ def delete_password_redefine_requisition(db, email):
         .filter(models.PasswordRedefineRequisition.email == email)\
         .delete()
     db.commit()
+
+
+def delete_recharge(db, recharge_id):
+    db.query(models.Recharge)\
+        .filter(models.Recharge.recharge_id == recharge_id)\
+        .delete()
+    db.commit()
+

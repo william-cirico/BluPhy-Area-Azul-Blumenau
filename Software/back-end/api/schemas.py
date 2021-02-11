@@ -28,8 +28,9 @@ class Vehicle(VehicleBase):
 
 
 class RechargeBase(BaseModel):
+    recharge_id: str
     value: float
-    payment_status: Optional[bool] = False
+    is_paid: Optional[bool] = False
     payment_type: str
 
 
@@ -39,7 +40,6 @@ class RechargeCreate(RechargeBase):
 
 class Recharge(RechargeBase):
     date: datetime
-    recharge_id: int
     user_id: int
 
     class Config:
@@ -49,6 +49,7 @@ class Recharge(RechargeBase):
 class UserBase(BaseModel):
     name: str
     email: str
+    document: str
 
 
 class UserCreate(UserBase):
@@ -61,7 +62,6 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     user_id: int
-    email: str
     balance: float
     vehicles: List[Vehicle]
 
@@ -139,3 +139,4 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     email: str
     scopes: List[str] = []
+
