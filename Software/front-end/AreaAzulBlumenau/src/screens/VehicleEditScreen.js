@@ -16,15 +16,13 @@ const VehicleEdit = props => (
 );
 
 
-export default ({navigation}) => {
-    const { vehicles } = useContext(VehicleContext);
-
+export default ({navigation, route}) => {    
     return (
         <View style={styles.container}>
             <View>
                 <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 20}}>Escolha o Veículo</Text>
                 <FlatList
-                    data={vehicles}
+                    data={route.params.vehicles}
                     renderItem={({ item }) => <VehicleEdit
                         vehicleId={item.vehicle_id} 
                         licensePlate={item.license_plate} 
@@ -53,6 +51,7 @@ const styles = StyleSheet.create({
     },
     containerVehicleEdit: {
         height: 50,
+        marginVertical: 10,
         marginHorizontal: 50,        
         flexDirection: 'row',
         justifyContent: 'center',

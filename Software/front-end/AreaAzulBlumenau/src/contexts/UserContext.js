@@ -17,15 +17,11 @@ export default ({ children }) => {
                     isLoading: false,
                     userData: action.userData,
                 }
-            case 'CHANGE_USER':
-                return {
-                    ...prevState,
-                    userData: action.userData,
-                }
             case 'SIGN_OUT':
+                clearInterval(paymentCron);
                 return {
                     ...prevState,
-                    userData: null,
+                    userData: null,                    
                 }
         }
     };
@@ -33,6 +29,7 @@ export default ({ children }) => {
     const initialState = {
         isLoading: true,
         userData: null,
+        hasCharges: false,
     }
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -46,32 +43,20 @@ export default ({ children }) => {
         }            
     };
 
-    // const checkIfHasRecharges = async () => {        
-    //     try {
-    //         await axios(`${server}/recharges/verify`);
+    const checkPayments = async paymentCron => {          
+        try {            
+            res = await axios(`${server}/recharges/`)
+            loadUser();                        
+        } catch(e) {
+            console.log(e);
+        }      
+    };
 
-    //         return true
-    //     } catch(e) {
-    //         return false
-    //     }
-    // };
+    
 
-    // const checkPayments = async () => {
-    //     try {
-    //         res = await axios(`${server}/recharges/`)
-    //     } catch(e) {
-
-    //     }
-    // }
-
-    // const check
-
-    useEffect(() => {        
-        // if (checkIfHasRecharges()) {
-        //     setInterval(checkPayments, 60000);
-        // }
-
-        loadUser();
+    useEffect(() => {
+        checkPayments(); 
+        paymentCron = setInterval(checkPayments, 10000);               
     }, []);
     
     if (state.isLoading) {

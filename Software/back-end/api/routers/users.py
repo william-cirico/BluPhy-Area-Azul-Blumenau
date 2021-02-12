@@ -23,6 +23,9 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if crud.get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="E-mail já foi cadastrado")
 
+    if crud.get_user_by_document(db, user.document):
+        raise HTTPException(status_code=400, detail="Documento já foi cadastrado")
+
     return crud.create_user(db, user)
 
 

@@ -6,7 +6,7 @@ import axios from 'axios';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
-import { emailRegex } from '../utils/regExp';
+import { emailRegex, cpfCnpjRegex } from '../utils/regExp';
 import { server, showErrorMessage } from '../utils/common';
 
 
@@ -39,6 +39,20 @@ export default ({ navigation}) => {
                         ...prevState,
                         email: action.email,
                         isEmailValid: false,
+                    }
+                }
+            case 'DOCUMENT':
+                if (cpfCnpjRegex.test(action.document)) {
+                    return {
+                        ...prevState,
+                        document: action.document,
+                        isDocumentValid: true,
+                    }                
+                } else {
+                    return {
+                        ...prevState,
+                        document: action.document,
+                        isDocumentValid: false,
                     }
                 }
             case 'PASSWORD':
@@ -77,6 +91,8 @@ export default ({ navigation}) => {
         isNameValid: false,
         email: '',
         isEmailValid: false,        
+        document: '',
+        isDocumentValid: false,
         password: '',
         isPasswordValid: false,        
         confirmPassword: '',
@@ -102,7 +118,8 @@ export default ({ navigation}) => {
                 {
                     name: state.name,
                     password: state.password,
-                    email: state.email
+                    email: state.email,
+                    document: state.document
                 }
             );                                
             Alert.alert(
@@ -133,6 +150,12 @@ export default ({ navigation}) => {
                 onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
                 placeholder='E-mail'
                 keyboardType='email-address'                
+            />
+            <Input 
+                isValid={state.isDocumentValid}
+                onChangeText={text => dispatch({ type: 'DOCUMENT', document: text})}
+                placeholder="CPF/CNPJ"
+                keyboardType='numeric'
             />
             <Input
                 isValid={state.isPasswordValid}

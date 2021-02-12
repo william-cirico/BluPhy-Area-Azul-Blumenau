@@ -87,9 +87,7 @@ def check_recharge_payment(
     db: Session = Depends(get_db)
 ):
     unpaid_recharges = crud.get_unpaid_recharges_by_user_id(db, user.user_id)
-
-    print(unpaid_recharges)
-
+    
     headers = {
         'X-Api-Version': '2',
         'X-Resource-Token': settings.x_resource_token,

@@ -212,6 +212,12 @@ def get_vehicle_by_id(db: Session, vehicle_id: int):
         .first()
 
 
+def get_user_by_document(db: Session, document: str):
+    return db.query(models.User)\
+        .filter(models.User.document == document)\
+        .first()
+
+
 def get_last_parked_ticket_from_vehicle(db: Session, vehicle_id: int):
     return db.query(models.ParkingTicket)\
         .filter(models.ParkingTicket.vehicle_id == vehicle_id)\

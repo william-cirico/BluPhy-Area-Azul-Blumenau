@@ -19,6 +19,8 @@ export default props => {
     const { vehicles, clearVehicle } = useContext(VehicleContext);  
     const { userData, clearUser } = useContext(UserContext);
 
+    const filteredVehicles = vehicles.filter(v => !v.is_parked);
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -37,7 +39,7 @@ export default props => {
                         label='Editar perfil'
                         onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email})}}                                                
                     /> 
-                    {vehicles ?
+                    {filteredVehicles ?
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
@@ -48,7 +50,7 @@ export default props => {
                             )}
                             label='Editar Veículos'
                             inactiveTintColor='black'
-                            onPress={() => {props.navigation.navigate('VehicleEditScreen')}}                                                            
+                            onPress={() => {props.navigation.navigate('VehicleEditScreen', {vehicles: filteredVehicles})}}                                                            
                         />  :
                         <DrawerItem 
                             icon={({color, size}) => (
