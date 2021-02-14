@@ -1,25 +1,87 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext, useReducer } from 'react';
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import commonStyles from '../theme/commonStyles';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import axios from 'axios';
+
 import Button from '../components/Button';
 import Input from '../components/Input';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { AuthContext } from '../contexts/AuthContext';
+import { licensePlateRegex } from '../utils/regExp';
+import commonStyles from '../theme/commonStyles';
+import { server, showErrorMessage } from '../utils/common';
 
-export default props => {
+export default ({ navigation }) => {
+    const { authContext } = useContext(AuthContext);
+
+    const reducer = (prevState, action) => {
+        switch(action.type) {
+            case 'LICENSE_PLATE':                
+                if (licensePlateRegex.test(action.licensePlate)) {                    
+                    return {
+                        ...prevState,
+                        licensePlate: action.licensePlate,
+                        isLicensePlateValid: true,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        licensePlate: action.licensePlate,
+                        isLicensePlateValid: false,
+                    }
+                }
+        }
+    }
+
+    const initialState = {
+        licensePlate: '',
+        isLicensePlateValid: false,        
+    };
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const licensePlateConsult = async () => {
+        try {
+            res = await axios(`${server}/vehicles/${state.licensePlate}`);
+            const { license_plate, model, vehicle_type, end_time } = res.data;
+            navigation.navigate('VehicleInformationScreen', {license_plate, model, vehicle_type, end_time})
+        } catch(e) {
+            showErrorMessage(e);
+        }
+    };
+
     return (
-        <KeyboardAvoidingView style={styles.container}
-        
+        <KeyboardAvoidingView 
+            style={styles.container}    
             behavior='height'
         >
-            <View style={{flex: 1, justifyContent: 'center', backgroundColor: '#e5e5e5', marginBottom: 50}}>    
-
+            <TouchableOpacity 
+                style={{alignSelf: 'flex-end'}}
+                onPress={authContext.signOut}
+            >
+                <Icon 
+                    size={30}
+                    name='times'
+                    color={commonStyles.colors.mainColor}
+                />
+            </TouchableOpacity>
+            <View style={{flex: 1, justifyContent: 'center', backgroundColor: '#e5e5e5', marginBottom: 50}}>                    
                 <Input 
-                    style={{ Colors: '#1a73e9', borderLeftColor: '#1a73e9'}}
+                    isValid={state.isLicensePlateValid}
+                    style={{ colors: '#1a73e9', borderLeftColor: '#1a73e9'}}
+                    autoCapitalize='characters'
                     placeholder='Digite a placa'
+                    onChangeText={text => dispatch({ 
+                        type: 'LICENSE_PLATE', 
+                        licensePlate: text.toUpperCase(),
+                    })}
+                    value={state.licensePlate}
                 />
                 <Button 
-                    title='Consultar'                
+                    title='Consultar'                    
+                    validForm={state.isLicensePlateValid} 
+                    disabled={!state.isLicensePlateValid}   
+                    onPress={licensePlateConsult}            
                 />
             </View>   
         </KeyboardAvoidingView>

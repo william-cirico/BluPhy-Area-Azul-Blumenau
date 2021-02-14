@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import commonStyles from '../theme/commonStyles.js';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import commonStyles from '../theme/commonStyles';
 
 export default props => {    
     return (
@@ -9,7 +11,7 @@ export default props => {
         <TextInput {...props} style={styles.input} />
         {props.isValid &&             
             <Icon 
-                color='#eb0e42'
+                color='#25cc30'
                 name='check-circle'
                 size={20}
                 style={{ marginHorizontal: 10 }}

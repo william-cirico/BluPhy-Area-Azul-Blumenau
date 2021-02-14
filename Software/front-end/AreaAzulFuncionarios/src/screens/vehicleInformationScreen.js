@@ -1,27 +1,35 @@
 import React, {useReducer} from 'react';
 
-import { StyleSheet, Text, View, Dimensions  } from 'react-native';
+import { StyleSheet, Text, View  } from 'react-native';
 
-import Car from 'react-native-vector-icons/FontAwesome';
-import Motorcyle from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Timer from '../components/Timer';
 
 import commonStyles from '../theme/commonStyles';
 
 
-export default () => {    
+export default ({navigation, route}) => {  
     return (
         <View style={styles.container}>
             <View style={styles.containerInformation}>
                 <View style={styles.containerVehicle}>
                     <View style={styles.boxVehicle}>
-                        <Car
-                            name='car'
-                            size={50}
-                            color='white'
-                        />
+                        {route.params.vehicle_type == 'CARRO' ? 
+                            <Icon
+                                name='car'
+                                size={50}
+                                color='white'
+                            /> :
+                            <Icon
+                                name='motorcycle' 
+                                size={50} 
+                                color='white'                       
+                            />
+                        }
+                        
                     </View>
                     <View style={styles.clock}>
-                        <Text style={styles.textClock}>00:00</Text>
+                        <Timer expiryTimestamp={new Date(route.params.end_time)} style={styles.textClock}/>                        
                     </View>
                 </View>
             </View>
@@ -33,11 +41,11 @@ export default () => {
                     <View style={styles.descriptBox}>
                         <View>
                             <Text style={styles.descriptTitle}>Placa</Text>
-                            <Text style={styles.descriptText}>XXX - 000</Text>
+                            <Text style={styles.descriptText}>{route.params.license_plate}</Text>
                         </View>
                         <View>
                             <Text style={styles.descriptTitle}>Modelo do veículo</Text>
-                            <Text style={styles.descriptText}>Honda Fit</Text>
+                            <Text style={styles.descriptText}>{route.params.model}</Text>
                         </View>
                     </View>
                 </View>

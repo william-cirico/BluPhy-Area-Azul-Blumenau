@@ -1,11 +1,64 @@
-import React from 'react';
-import { KeyboardAvoidingView, Image, StyleSheet, Text, TextInput, View  } from 'react-native'; 
+import React, { useContext, useReducer } from 'react';
+import { KeyboardAvoidingView, Image, StyleSheet, Text, View  } from 'react-native'; 
 
-import commonStyles from '../theme/commonStyles';
+import { AuthContext } from '../contexts/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import commonStyles from '../theme/commonStyles';
+import { emailRegex } from '../utils/regExp';
 
 export default () => {
+    const { authContext } = useContext(AuthContext);
+
+    const reducer = (prevState, action) => {
+        switch(action.type) {
+            case 'EMAIL':
+                if (emailRegex.test(action.email)) {
+                    return {
+                        ...prevState,
+                        isEmailValid: true,
+                        email: action.email,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        isEmailValid: false,
+                        email: action.email,
+                    }
+                }
+            case 'PASSWORD':                
+                if (action.password.trim().length >= 6) {
+                    return {
+                        ...prevState,
+                        isPasswordValid: true,
+                        password: action.password,
+                    }
+                } else {
+                    return {
+                        ...prevState,
+                        isPasswordValid: false,
+                        password: action.password,
+                    }
+                }
+        }
+    }
+
+    const initialState = {
+        email: '',
+        isEmailValid: false,
+        password: '',
+        isPasswordValid: false,
+    }
+
+    const [state, dispatch] = useReducer(reducer, initialState)
+    
+    const validations = [
+        state.isEmailValid,
+        state.isPasswordValid,
+    ];
+
+    const validForm = validations.reduce((acc, cv) => acc && cv)
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -15,18 +68,33 @@ export default () => {
                 <View style={styles.logoContainer}>
                     <Image
                         style={styles.logo}
-                        source={require('../img/logoFuncionarios.png')}
+                        source={require('../assets/logoFuncionarios.png')}
                     />
                 </View>
             </View>
             <View style={styles.containerView}>
                 <View style={styles.box}>
                     <Text style={styles.text}>E-mail</Text>
-                    <Input/>
+                    <Input
+                        isValid={state.isEmailValid}
+                        defaultValue={state.email}
+                        onChangeText={text => dispatch({ type: 'EMAIL', email: text })}
+                        keyboardType='email-address'
+                    />
                     <Text style={styles.text}>Senha</Text>
-                    <Input/>
+                    <Input
+                        isValid={state.isPasswordValid}
+                        defaultValue={state.password}
+                        onChangeText={text => dispatch({ type: 'PASSWORD', password: text })}
+                        secureTextEntry={true}
+                    />
                     <Button
                         title="Entrar"
+                        validForm={validForm} 
+                        disabled={!validForm}
+                        onPress={() => {
+                            authContext.signIn({username: state.email, password: state.password}); 
+                        }}
                     />
                 </View>
             </View>

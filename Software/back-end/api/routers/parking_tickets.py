@@ -60,7 +60,9 @@ async def create_parking_ticket(
     if vehicle.user_id != user.user_id:
         raise HTTPException(status_code=404, detail="O usuário não possui esse veículo")
 
-    if vehicle.is_parked:
+    is_parked = crud.get_parked_vehicle_by_license_plate(db, vehicle.license_plate)
+
+    if is_parked:
         raise HTTPException(status_code=400, detail="Esse veículo já está estacionado")
 
     for v in user.vehicles:

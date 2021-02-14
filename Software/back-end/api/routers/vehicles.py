@@ -16,7 +16,6 @@ router = APIRouter(
 
 @router.get(
     '/parking-time/{vehicle_id}',
-    tags=["traffic wardens"],
     dependencies=[Security(get_current_user, scopes=["user"])]
 )
 def get_parking_time(
@@ -38,8 +37,7 @@ def get_parking_time(
 
 
 @router.get(
-    '/{license_plate}',
-    response_model=schemas.ParkingInformation,
+    '/{license_plate}',    
     tags=["traffic wardens"],
     dependencies=[Security(get_current_user, scopes=["traffic_warden"])]
 )
@@ -47,19 +45,16 @@ def get_parked_vehicle_by_license_plate(
     license_plate: str,
     db: Session = Depends(get_db)
 ):
-    vehicle: schemas.Vehicle = crud.get_vehicle_by_license_plate(db, license_plate)
+    vehicle: schemas.Vehicle = crud.get_parked_vehicle_by_license_plate(db, license_plate)
 
     if not vehicle:
-        raise HTTPException(status_code=404, detail="Veículo não está cadastrado!")
-
-    if not vehicle.is_parked:
-        raise HTTPException(status_code=400, detail="Veículo não está estacionado!")
+        raise HTTPException(status_code=404, detail="Veículo não está estacionado!")
 
     parking_ticket = crud.get_last_parked_ticket_from_vehicle(db, vehicle.vehicle_id)
 
-    parking_information = schemas.ParkingInformation(parking_ticket=parking_ticket, vehicle=vehicle)
+    converted_time = datetime.fromtimestamp(parking_ticket.end_time.timestamp(), tz=timezone.utc)
 
-    return parking_information
+    return {'license_plate': vehicle.license_plate, 'model': vehicle.model, 'vehicle_type': vehicle.vehicle_type, 'end_time': converted_time}
 
 
 @router.get('/', response_model=List[schemas.Vehicle])

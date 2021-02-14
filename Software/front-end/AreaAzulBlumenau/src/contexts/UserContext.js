@@ -39,7 +39,7 @@ export default ({ children }) => {
             res = await axios(`${server}/users/`);                            
             dispatch({type: 'RESTORE_USER', userData: res.data})
         } catch(e) {
-            showErrorMessage(e);
+            console.log(e);
         }            
     };
 

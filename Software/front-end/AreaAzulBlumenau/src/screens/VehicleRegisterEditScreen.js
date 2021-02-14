@@ -161,7 +161,7 @@ export default ({ navigation, route }) => {
                     <LabelInput 
                         label='MODELO'
                         isValid={state.isVehicleModelValid}
-                        autoCapitalize='characters'                    
+                        autoCapitalize='characters'
                         keyboardType='default'
                         onChangeText={text => dispatch({ 
                             type: 'VEHICLE_MODEL',

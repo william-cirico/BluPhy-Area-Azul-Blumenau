@@ -200,9 +200,10 @@ def get_vehicles_by_user_id(db: Session, user_id: int):
         .all()
 
 
-def get_vehicle_by_license_plate(db: Session, license_plate: str):
+def get_parked_vehicle_by_license_plate(db: Session, license_plate: str):
     return db.query(models.Vehicle)\
         .filter(models.Vehicle.license_plate == license_plate)\
+        .filter(models.Vehicle.is_parked)\
         .first()
 
 

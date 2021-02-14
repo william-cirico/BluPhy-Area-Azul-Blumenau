@@ -3,7 +3,7 @@ import React, { createContext, useReducer, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-import Loading from '../screens/LoadingScreen';
+import Loading from '../components/Loading';
 import { server, showErrorMessage } from '../utils/common';
 
 
@@ -42,12 +42,7 @@ export default ({ children }) => {
         const loadStorageData = async () => {                         
             try {
                 // Obtendo o token de autenticação do AsyncStorage
-                const userToken = await AsyncStorage.getItem('@auth_token');                
-                // Validando o token
-                await axios(
-                    `${server}/users/`,
-                    {headers: {'Authorization': `bearer ${userToken}`}}
-                ); 
+                const userToken = await AsyncStorage.getItem('@auth_token');                                
                 // Definindo o header de Authorization para as próximas requisições
                 axios.defaults.headers.common['Authorization'] = `bearer ${userToken}`;                
                 dispatch({ 

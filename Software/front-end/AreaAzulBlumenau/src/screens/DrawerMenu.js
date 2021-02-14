@@ -19,7 +19,7 @@ export default props => {
     const { vehicles, clearVehicle } = useContext(VehicleContext);  
     const { userData, clearUser } = useContext(UserContext);
 
-    const filteredVehicles = vehicles.filter(v => !v.is_parked);
+    const filteredVehicles = vehicles && vehicles.filter(v => !v.is_parked);
 
     return (
         <View style={styles.container}>
