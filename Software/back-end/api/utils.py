@@ -13,8 +13,11 @@ def get_password_hash(password):
 
 def document_validator(document:str) -> bool:
     document = clean_document(document)
-    if len(document) == 11:
-        response = False
+    response = False
+    compare = document[1] * len(document)  
+    if compare == document:
+        pass 
+    elif len(document) == 11:
         soma1 = 0
         soma2 = 0
         num = 10
@@ -42,7 +45,6 @@ def document_validator(document:str) -> bool:
             response = True  
     
     elif len(document) == 14:
-        response = False
         soma1 = 0
         soma2 = 0
         num1 = 5
@@ -76,9 +78,7 @@ def document_validator(document:str) -> bool:
             tot2 = 0
         if tot1 == document[12] and tot2 == document[13]:
             response = True
-    else:
-        response = False
-    
+         
     return response
 
 def clean_document(document:str) -> str:
