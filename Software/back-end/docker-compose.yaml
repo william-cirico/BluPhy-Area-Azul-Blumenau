@@ -1,0 +1,45 @@
+version: '3.3'
+
+services:
+  app:
+    image: santosclaudinei/aplicacao
+    container_name: app
+    ports:
+      - 8080:80
+    depends_on:
+      - postgresserver
+    networks:
+      - rede_projeto
+    
+
+  postgresserver:
+    image: santosclaudinei/postgresfinal
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/postgresql/data
+    networks:
+      - rede_projeto
+
+  pgadmin: 
+    image: santosclaudinei/operacaofinal
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgresserver
+    networks:
+      - rede_projeto
+
+networks:
+  rede_projeto:
+    driver: bridge
