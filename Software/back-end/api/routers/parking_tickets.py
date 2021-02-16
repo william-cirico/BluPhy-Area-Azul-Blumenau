@@ -90,7 +90,7 @@ async def create_parking_ticket(
         if v.vehicle_id != vehicle_id:
             crud.update_is_active_vehicle(db, v.vehicle_id, False)
 
-    # Criando uma background task para atualizar o estado do veículo após o tempo expirar
+    # Criando uma background task para atualizar o estado do veículo após o tempo expirar    
     sleep_time = 3600 * parking_ticket.parking_time
     background_tasks.add_task(change_vehicle_state, user.user_id, vehicle_id, sleep_time, db)
 

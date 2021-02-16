@@ -9,8 +9,7 @@ export default ({ expiryTimestamp, style }) => {
         minutes,
         hours,
     } = useTimer({ 
-        expiryTimestamp, 
-        onExpire: () => console.log('Expirou!')
+        expiryTimestamp
     });
 
     return (

@@ -32,22 +32,24 @@ export default props => {
 
     const { deleteVehicle, loadVehicles } = useContext(VehicleContext);
 
-    const cancelParking = () => {
+    const cancelParking = async () => {
+        try {
+            await axios.delete(`${server}/parking-tickets/${props.vehicle_id}`);
+            setTimer(null);
+            loadVehicles();                            
+        } catch(e) {
+            showErrorMessage(e);
+        }
+    };
+
+    const HandleCancelParking = () => {
         Alert.alert(
             'Cancelar Ticket', 
             'Você tem certeza que deseja cancelar o ticket de estacionamento?',
             [
                 {
                     text: 'Sim', 
-                    onPress: async () => {
-                        try {
-                            await axios.delete(`${server}/parking-tickets/${props.vehicle_id}`);
-                            setTimer(null);
-                            loadVehicles();                            
-                        } catch(e) {
-                            showErrorMessage(e);
-                        }
-                    }
+                    onPress: cancelParking
                 },
                 {
                     text: 'Não'
@@ -74,7 +76,7 @@ export default props => {
     return (  
         <View style={[styles.container, !props.is_active && {borderLeftColor: '#ccc'}]}>
             <Swipeable                
-                renderLeftActions={getLeftContent}          
+                renderLeftActions={props.is_active && !props.is_parked && getLeftContent}          
             >
                 <View style={styles.innerContainer}>
                     <View style={styles.textContainer}>
@@ -82,12 +84,12 @@ export default props => {
                         <Text style={[styles.carModelText, !props.is_active && {color: '#ccc'}]}>{props.model}</Text>
                     </View>
                     <TouchableOpacity
-                        onPress={props.is_parked ? cancelParking : props.parkCar}
+                        onPress={props.is_parked ? HandleCancelParking : props.parkCar}
                         style={[styles.button, !props.is_active && {backgroundColor: '#ccc'}]}
                         disabled={!props.is_active}
                     > 
                         {timer ? 
-                            <Timer expiryTimestamp={timer} style={styles.buttonText}/> :
+                            <Timer expiryTimestamp={timer} style={styles.buttonText} onExpire={cancelParking}/> :
                             <Text style={styles.buttonText}>Estacionar</Text>
                         }                                                
                     </TouchableOpacity>                

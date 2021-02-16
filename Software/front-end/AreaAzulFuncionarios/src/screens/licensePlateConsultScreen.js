@@ -52,8 +52,7 @@ export default ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView 
-            style={styles.container}    
-            behavior='height'
+            style={styles.container}                
         >
             <TouchableOpacity 
                 style={{alignSelf: 'flex-end'}}
@@ -65,7 +64,7 @@ export default ({ navigation }) => {
                     color={commonStyles.colors.mainColor}
                 />
             </TouchableOpacity>
-            <View style={{flex: 1, justifyContent: 'center', backgroundColor: '#e5e5e5', marginBottom: 50}}>                    
+            <View style={{flex: 1, justifyContent: 'center'}}>                    
                 <Input 
                     isValid={state.isLicensePlateValid}
                     style={{ colors: '#1a73e9', borderLeftColor: '#1a73e9'}}
@@ -74,8 +73,7 @@ export default ({ navigation }) => {
                     onChangeText={text => dispatch({ 
                         type: 'LICENSE_PLATE', 
                         licensePlate: text.toUpperCase(),
-                    })}
-                    value={state.licensePlate}
+                    })}                    
                 />
                 <Button 
                     title='Consultar'                    

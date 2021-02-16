@@ -5,7 +5,7 @@ import { useTimer } from 'react-timer-hook';
 
 import { VehicleContext } from '../contexts/VehicleContext';
 
-export default ({ expiryTimestamp, style }) => {
+export default ({ expiryTimestamp, style, onExpire }) => {
     const { loadVehicles } = useContext(VehicleContext); 
 
     const {
@@ -14,7 +14,7 @@ export default ({ expiryTimestamp, style }) => {
         hours,
     } = useTimer({ 
         expiryTimestamp, 
-        onExpire: loadVehicles
+        onExpire
     });
 
 

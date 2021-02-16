@@ -4,6 +4,7 @@ import { Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View }
 import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
+import Logo from '../assets/logo.png';
 import { emailRegex } from '../utils/regExp';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -69,6 +70,7 @@ export default ({ navigation }) => {
                 <View style={styles.logoContainer}>
                     <Image 
                         style={styles.logo}
+                        source={Logo}
                     />
                 </View>
                 <View style={styles.body}>

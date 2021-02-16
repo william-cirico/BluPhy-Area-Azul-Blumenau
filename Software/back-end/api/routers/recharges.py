@@ -47,7 +47,7 @@ def create_charge_by_billet(
         'https://sandbox.boletobancario.com/api-integration/charges',
         json=charge,
         headers=headers
-    )
+    )    
 
     if r.status_code != 200:
         raise HTTPException(status_code=400, detail='Ocorreu um erro ao processar sua recarga')

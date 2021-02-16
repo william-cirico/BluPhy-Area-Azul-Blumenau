@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState }  from 'react';
+import React, { useContext}  from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {    
     DrawerItem
 } from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
 
-import { server, showErrorMessage } from '../utils/common';
 import { AuthContext } from '../contexts/AuthContext';
 import { VehicleContext } from '../contexts/VehicleContext';
 import { UserContext } from '../contexts/UserContext';
@@ -37,7 +35,7 @@ export default props => {
                         )}
                         inactiveTintColor='black'
                         label='Editar perfil'
-                        onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email})}}                                                
+                        onPress={() => {props.navigation.navigate('UserEditScreen', {name: userData.name, email: userData.email, document: userData.document})}}                                                
                     /> 
                     {filteredVehicles ?
                         <DrawerItem 

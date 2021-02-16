@@ -10,7 +10,7 @@ from ..config import settings
 from .. import crud
 from ..dependencies import get_db, get_current_user
 from .. import schemas
-from ..utils import get_password_hash
+from ..utils import document_validator
 
 router = APIRouter(
     prefix="/users",
@@ -25,6 +25,9 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     if crud.get_user_by_document(db, user.document):
         raise HTTPException(status_code=400, detail="Documento já foi cadastrado")
+
+    if not document_validator(user.document):
+        raise HTTPException(status_code=400, detail="Documento Inválido")
 
     return crud.create_user(db, user)
 
@@ -121,6 +124,9 @@ async def update_user(
         db: Session = Depends(get_db),
         current_user: schemas.User = Security(get_current_user, scopes=["user"])
 ):    
+    if not document_validator(user.document):
+        raise HTTPException(status_code=400, detail="Documento Inválido")
+
     crud.update_user(db, user, current_user.user_id)    
     return crud.get_user_by_email(db, current_user.email)
 
