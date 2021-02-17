@@ -2,8 +2,10 @@ version: '3.3'
 
 services:
   app:
-    image: santosclaudinei/aplicacao
+    image: santosclaudinei/aplicacaofinal
     container_name: app
+    env_file:
+      - .env
     ports:
       - 8080:80
     depends_on:
@@ -15,6 +17,8 @@ services:
   postgresserver:
     image: santosclaudinei/postgresfinal
     container_name: postgres
+    env_file:
+      - .env
     restart: always
     environment:
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
@@ -30,6 +34,8 @@ services:
   pgadmin: 
     image: santosclaudinei/operacaofinal
     container_name: pgadmin
+    env_file:
+      - .env
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
