@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
         color: commonStyles.colors.mainColor,
         fontWeight: 'bold',
         marginBottom: 10,
+        textAlign: 'center'
     },
     vehicleTypeText: {
         fontWeight: 'bold'
