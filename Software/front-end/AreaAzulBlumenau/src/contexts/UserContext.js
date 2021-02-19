@@ -43,20 +43,20 @@ export default ({ children }) => {
         }            
     };
 
-    const checkPayments = async paymentCron => {          
+    const checkPayments = async () => { 
+        console.log('cron');         
         try {            
             res = await axios(`${server}/recharges/`)
             loadUser();                        
         } catch(e) {
+            clearInterval(paymentCron);
             console.log(e);
         }      
-    };
-
-    
+    };    
 
     useEffect(() => {
-        checkPayments(); 
-        paymentCron = setInterval(checkPayments, 10000);               
+        paymentCron = setInterval(checkPayments, 10000);             
+        loadUser();              
     }, []);
     
     if (state.isLoading) {
@@ -67,6 +67,7 @@ export default ({ children }) => {
         <UserContext.Provider value={{
             userData: state.userData, 
             loadUser, 
+            checkPayments,
             clearUser: () => dispatch({ type: 'SIGN_OUT'})
         }}>
             {children}

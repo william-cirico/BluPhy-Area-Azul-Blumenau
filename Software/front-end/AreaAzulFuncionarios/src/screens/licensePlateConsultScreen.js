@@ -1,5 +1,5 @@
-import React, { useContext, useReducer } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useReducer, useState } from 'react';
+import { KeyboardAvoidingView, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { licensePlateRegex } from '../utils/regExp';
 import commonStyles from '../theme/commonStyles';
 import { server, showErrorMessage } from '../utils/common';
+import Loading from '../components/Loading';
 
 export default ({ navigation }) => {
     const { authContext } = useContext(AuthContext);
@@ -39,8 +40,10 @@ export default ({ navigation }) => {
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [isLoading, setLoading] = useState(false);
 
     const licensePlateConsult = async () => {
+        setLoading(true);
         try {
             res = await axios(`${server}/vehicles/${state.licensePlate}`);
             const { license_plate, model, vehicle_type, end_time } = res.data;
@@ -48,12 +51,14 @@ export default ({ navigation }) => {
         } catch(e) {
             showErrorMessage(e);
         }
+        setLoading(false);
     };
 
     return (
         <KeyboardAvoidingView 
             style={styles.container}                
-        >
+        >            
+            <Loading isVisible={isLoading}/>
             <TouchableOpacity 
                 style={{alignSelf: 'flex-end'}}
                 onPress={authContext.signOut}
@@ -73,7 +78,8 @@ export default ({ navigation }) => {
                     onChangeText={text => dispatch({ 
                         type: 'LICENSE_PLATE', 
                         licensePlate: text.toUpperCase(),
-                    })}                    
+                    })}    
+                    value={state.licensePlate}                
                 />
                 <Button 
                     title='Consultar'                    
@@ -81,7 +87,7 @@ export default ({ navigation }) => {
                     disabled={!state.isLicensePlateValid}   
                     onPress={licensePlateConsult}            
                 />
-            </View>   
+            </View> 
         </KeyboardAvoidingView>
     );
 }

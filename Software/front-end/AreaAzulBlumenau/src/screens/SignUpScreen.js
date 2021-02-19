@@ -1,10 +1,12 @@
-import React, { useContext, useReducer } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import React, { useReducer, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import axios from 'axios';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
+import LoadingModal from '../components/LoadingModal';
 import commonStyles from '../theme/commonStyles';
 import { emailRegex, cpfCnpjRegex } from '../utils/regExp';
 import { server, showErrorMessage } from '../utils/common';
@@ -111,7 +113,10 @@ export default ({ navigation}) => {
     
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSignUp = async () => {
+        setIsLoading(true);
         try {
             await axios.post(
                 `${server}/users/`,
@@ -133,57 +138,53 @@ export default ({ navigation}) => {
         } catch(e) {            
             showErrorMessage(e);
         }
+        setIsLoading(false);
     };
 
     return (
-        <KeyboardAvoidingView 
-            style={styles.container}
-            behavior='height'                       
+        <KeyboardAwareScrollView
+            style={{flex: 1 ,backgroundColor: commonStyles.colors.backgroundColor}}                        
+            enableOnAndroid={true}                                
         >
-            <Input
-                isValid={state.isNameValid}
-                onChangeText={text => dispatch({ type: 'NAME', name: text })} 
-                placeholder='Nome'
-            />
-            <Input
-                isValid={state.isEmailValid}
-                onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
-                placeholder='E-mail'
-                keyboardType='email-address'                
-            />
-            <Input 
-                isValid={state.isDocumentValid}
-                onChangeText={text => dispatch({ type: 'DOCUMENT', document: text})}
-                placeholder="CPF/CNPJ"
-                keyboardType='numeric'
-            />
-            <Input
-                isValid={state.isPasswordValid}
-                onChangeText={text => dispatch({ type: 'PASSWORD', password: text })} 
-                placeholder='Senha'
-                secureTextEntry={true}
-            />
-            <Input
-                isValid={state.isConfirmPasswordValid}
-                onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
-                placeholder='Confirmar senha'
-                secureTextEntry={true}
-            />
-            <Button 
-                title='Cadastre-se' 
-                validForm={validForm} 
-                disabled={!validForm}
-                onPress={handleSignUp}
-            />
-        </KeyboardAvoidingView>
+            <LoadingModal isVisible={isLoading}/>   
+            <View style={{padding: 30}}>
+                <Input
+                    isValid={state.isNameValid}
+                    onChangeText={text => dispatch({ type: 'NAME', name: text })} 
+                    placeholder='Nome'
+                    style={{marginTop: 50}}                    
+                />
+                <Input
+                    isValid={state.isEmailValid}
+                    onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
+                    placeholder='E-mail'
+                    keyboardType='email-address'                
+                />
+                <Input 
+                    isValid={state.isDocumentValid}
+                    onChangeText={text => dispatch({ type: 'DOCUMENT', document: text})}
+                    placeholder="CPF/CNPJ"
+                    keyboardType='numeric'
+                />
+                <Input
+                    isValid={state.isPasswordValid}
+                    onChangeText={text => dispatch({ type: 'PASSWORD', password: text })} 
+                    placeholder='Senha'
+                    secureTextEntry={true}
+                />
+                <Input
+                    isValid={state.isConfirmPasswordValid}
+                    onChangeText={text => dispatch({ type: 'CONFIRM_PASSWORD', confirmPassword: text })} 
+                    placeholder='Confirmar senha'
+                    secureTextEntry={true}
+                />
+                <Button 
+                    title='Cadastre-se' 
+                    validForm={validForm} 
+                    disabled={!validForm}
+                    onPress={handleSignUp}                  
+                />                                                
+            </View>
+        </KeyboardAwareScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: commonStyles.colors.backgroundColor,
-        padding: 30,
-        justifyContent: 'center',        
-    },
-});

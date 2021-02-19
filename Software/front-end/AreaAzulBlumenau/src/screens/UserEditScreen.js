@@ -1,10 +1,11 @@
-import React, { useContext, useReducer } from 'react';
+import React, { useContext, useReducer, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet } from 'react-native';
 
 import axios from 'axios';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
+import LoadingModal from '../components/LoadingModal';
 import commonStyles from '../theme/commonStyles';
 import { UserContext } from '../contexts/UserContext';
 import { server, showErrorMessage } from '../utils/common';
@@ -79,11 +80,12 @@ export default ({ navigation, route }) => {
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
     const { loadUser } = useContext(UserContext);
+    const [isLoading, setLoading] = useState(false);
 
     const handleEditUser = async () => {
+        setLoading(true);
         try {
-            // Atualizando os dados no banco
-            console.log(state.name, state.email, state.document)
+            // Atualizando os dados no banco            
             await axios.put(
                 `${server}/users/`,
                 {
@@ -102,11 +104,12 @@ export default ({ navigation, route }) => {
                     text: 'Ok',
                     onPress: () => navigation.push('MainScreen')
                 }]
-            );              
+            );                          
         } catch(e) {       
             console.log(e);     
             showErrorMessage(e);
         }
+        setLoading(false);
     };
 
     return (
@@ -114,6 +117,7 @@ export default ({ navigation, route }) => {
             style={styles.container}
             behavior='height'                       
         >
+            <LoadingModal isVisible={isLoading}/>
             <Input
                 isValid={state.isNameValid}
                 onChangeText={text => dispatch({ type: 'NAME', name: text })} 

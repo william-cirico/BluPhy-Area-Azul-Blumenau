@@ -1,10 +1,11 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer, useContext, useState } from 'react';
 import { Alert, Dimensions, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View  } from 'react-native';
 
 import Car from 'react-native-vector-icons/FontAwesome';
 import Motorcyle from 'react-native-vector-icons/MaterialIcons';
 
 import LabelInput from '../components/LabelInput';
+import LoadingModal from '../components/LoadingModal';
 import Button from '../components/Button';
 import commonStyles from '../theme/commonStyles';
 import { licensePlateRegex } from '../utils/regExp';
@@ -68,8 +69,11 @@ export default ({ navigation, route }) => {
 
     const { createVehicle } = useContext(VehicleContext);
 
-    const addVehicle = () => {                
-        createVehicle(state.licensePlate, state.vehicleModel, state.vehicleType) &&
+    const [isLoading, setIsLoading] = useState(false);
+
+    const addVehicle = () => {           
+        setIsLoading(true);     
+        createVehicle(state.licensePlate, state.vehicleModel, state.vehicleType) &&        
         Alert.alert(
             'Sucesso', 
             'Veículo cadastrado com sucesso!',
@@ -80,12 +84,14 @@ export default ({ navigation, route }) => {
                 }
             ]
         );             
+        setIsLoading(false);
     }
 
     const { updateVehicle } = useContext(VehicleContext);
 
     const editVehicle = () => {
-        updateVehicle(route.params.vehicleId, state.licensePlate, state.vehicleModel, state.vehicleType) &&
+        setIsLoading(true);
+        updateVehicle(route.params.vehicleId, state.licensePlate, state.vehicleModel, state.vehicleType) &&                        
         Alert.alert(
             'Sucesso', 
             'Veículo editado com sucesso!',
@@ -96,13 +102,15 @@ export default ({ navigation, route }) => {
                 }
             ]
         ); 
+        setIsLoading(false);
     };
 
-    return (
+    return (        
         <KeyboardAvoidingView 
             style={styles.container}
             behavior="height"
-        >
+        >   
+            <LoadingModal isVisible={isLoading}/>
             <View style={styles.bodyContainer}>
                 <View>
                     <View style={styles.buttonsContainer}>

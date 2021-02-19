@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import axios from 'axios';
@@ -8,18 +8,20 @@ import Button from '../components/Button';
 import Loading from '../screens/LoadingScreen';
 import commonStyles from '../theme/commonStyles';
 import { server, showErrorMessage } from '../utils/common';
+import { UserContext } from '../contexts/UserContext';
 
 export default ({ navigation, route }) => {
     const [value, setValue] = useState(7.5);
     const [link, setLink]= useState();
     const [loading, setLoading] = useState(false);
+    const { checkPayments } = useContext(UserContext);
 
     const paymentByBillet = async value => {
         setLoading(true);
         try {
             res = await axios.post(`${server}/recharges/?amount=${value}`);
-
             setLink(res.data.link);
+            paymentCron = setInterval(checkPayments, 10000);            
         } catch(e) {
             showErrorMessage(e);
         }

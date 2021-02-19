@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import { VehicleContext } from '../contexts/VehicleContext';
 import commonStyles from '../theme/commonStyles';
 
 const VehicleEdit = props => (    

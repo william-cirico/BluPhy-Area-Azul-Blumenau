@@ -87,6 +87,9 @@ def check_recharge_payment(
     db: Session = Depends(get_db)
 ):
     unpaid_recharges = crud.get_unpaid_recharges_by_user_id(db, user.user_id)
+
+    if not unpaid_recharges:
+        raise HTTPException(status_code=404)
     
     headers = {
         'X-Api-Version': '2',
