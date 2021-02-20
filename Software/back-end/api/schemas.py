@@ -1,3 +1,9 @@
+"""
+Os modelos de request_body e response_model. Define os dados
+que vão ser recebidos na requisição e os dados que vão ser
+retornados como resposta.
+"""
+
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
@@ -124,6 +130,12 @@ class TrafficWarden(TrafficWardenBase):
 
     class Config:
         orm_mode = True
+
+
+class Admin(BaseModel):
+    admin_id: int
+    name: str
+    email: str
 
 
 class ChangePassword(BaseModel):

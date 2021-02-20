@@ -1,3 +1,6 @@
+"""
+Rotas de recargas.
+"""
 import requests
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, Security
 from sqlalchemy.orm import Session
@@ -13,7 +16,10 @@ router = APIRouter(
 )
 
 
-@router.post('/')
+@router.post(
+    '/',
+    summary='Cria uma cobrança por boleto'
+)
 def create_charge_by_billet(
     amount: float = Query(..., gt=0),
     user: schemas.User = Security(get_current_user, scopes=["user"]),
@@ -47,7 +53,7 @@ def create_charge_by_billet(
         'https://sandbox.boletobancario.com/api-integration/charges',
         json=charge,
         headers=headers
-    )    
+    )
 
     if r.status_code != 200:
         raise HTTPException(status_code=400, detail='Ocorreu um erro ao processar sua recarga')
@@ -68,24 +74,19 @@ def create_charge_by_billet(
     return {'link': billet_link}
 
 
-@router.get('/verify', status_code=204)
-def user_has_recharges(
-    user: schemas.User = Security(get_current_user, scopes=['user']),    
-    db: Session = Depends(get_db)
-):
-    if not crud.get_unpaid_recharges_by_user_id(db, user.user_id):
-        raise HTTPException(status_code=404)
-
-    return Response(status_code=204)
-
-
-
-@router.get('/', status_code=204)
+@router.get(
+    '/',
+    status_code=204,
+    summary='Checar o pagamento das recargas'
+)
 def check_recharge_payment(
     user: schemas.User = Security(get_current_user, scopes=['user']),
     access_token: str = Depends(get_access_token),
     db: Session = Depends(get_db)
 ):
+    """
+    Realiza a verificação de todas as recargas não pagas do usuário.
+    """
     unpaid_recharges = crud.get_unpaid_recharges_by_user_id(db, user.user_id)
 
     if not unpaid_recharges:
@@ -104,7 +105,7 @@ def check_recharge_payment(
         )
 
         if r.status_code != 200:
-            raise HTTPException(status_code=400, detail='Ocorreu um erro consultar a cobrança')
+            raise HTTPException(status_code=400)
 
         payment_status = r.json()['status']
 
@@ -117,5 +118,3 @@ def check_recharge_payment(
             crud.update_recharge_status(db, unpaid_recharge.recharge_id)
 
     return Response(status_code=204)
-
-

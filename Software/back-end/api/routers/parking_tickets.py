@@ -1,3 +1,7 @@
+"""
+Rotas de Tickets de Estacionamento.
+"""
+
 from typing import List
 from datetime import datetime
 import asyncio
@@ -24,7 +28,16 @@ async def change_vehicle_state(
         vehicle_id: int,
         sleep_time: int,
         db: Session
-):
+) -> None:
+    """
+    Background Task para mudar o estado do veículo depois que o tempo do ticket expira.
+
+    Args:
+        user_id: ID do usuário.
+        vehicle_id: ID do veículo.
+        sleep_time: Tempo de espera para a função rodar.
+        db: Sessão do BD.
+    """
     # Tempo de espera para executar a função
     await asyncio.sleep(sleep_time)
 
@@ -32,7 +45,7 @@ async def change_vehicle_state(
     vehicle: schemas.Vehicle = crud.get_vehicle_by_id(db, vehicle_id)
 
     if vehicle:
-        parking_ticket = crud.get_last_parked_ticket_from_vehicle(db, vehicle_id)
+        parking_ticket = crud.get_last_parking_ticket_from_vehicle(db, vehicle_id)
 
         if vehicle.is_parked and parking_ticket.end_time < datetime.now():
             crud.update_is_parked_vehicle(db, vehicle_id, False)
@@ -43,7 +56,11 @@ async def change_vehicle_state(
                 crud.update_is_active_vehicle(db, v.vehicle_id, True)
 
 
-@router.post('/{vehicle_id}', response_model=schemas.ParkingTicket)
+@router.post(
+    '/{vehicle_id}',
+    response_model=schemas.ParkingTicket,
+    summary='Cria um ticket de estacionamento'
+)
 async def create_parking_ticket(
         vehicle_id: int,
         parking_ticket: schemas.ParkingTicketCreate,
@@ -51,6 +68,11 @@ async def create_parking_ticket(
         db: Session = Depends(get_db),
         user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
+    """
+    Cria um ticket de estacionamento para o veículo informado.
+    """
+    global CAR_PRICE, MOTORCYCLE_PRICE
+
     vehicle: schemas.Vehicle = crud.get_vehicle_by_id(db, vehicle_id)
 
     # Validações
@@ -60,6 +82,7 @@ async def create_parking_ticket(
     if vehicle.user_id != user.user_id:
         raise HTTPException(status_code=404, detail="O usuário não possui esse veículo")
 
+    # Verifica se o veículo com aquela placa já está estacionado
     is_parked = crud.get_parked_vehicle_by_license_plate(db, vehicle.license_plate)
 
     if is_parked:
@@ -73,7 +96,7 @@ async def create_parking_ticket(
             )
 
     # Calculando o preço do ticket
-    price_per_hour = 1.5 if vehicle.vehicle_type == 'CARRO' else 0.75
+    price_per_hour = CAR_PRICE if vehicle.vehicle_type == 'CARRO' else MOTORCYCLE_PRICE
     price = parking_ticket.parking_time * price_per_hour
 
     # Validando se o usuário possui saldo suficiente
@@ -97,12 +120,19 @@ async def create_parking_ticket(
     return crud.create_parking_ticket(db, parking_ticket, price, vehicle_id)
 
 
-@router.delete('/{vehicle_id}', status_code=204)
+@router.delete(
+    '/{vehicle_id}',
+    status_code=204,
+    summary='Cancelar ticket de estacionamento'
+)
 async def cancel_parking_ticket(
         vehicle_id: int,
         db: Session = Depends(get_db),
         user: schemas.User = Security(get_current_user, scopes=["user"])
 ):
+    """
+    Cancela o ticket de estacionamento do veículo informado.
+    """
     vehicle = crud.get_vehicle_by_id(db, vehicle_id)
 
     if not vehicle:
@@ -120,7 +150,7 @@ async def cancel_parking_ticket(
         crud.update_is_active_vehicle(db, v.vehicle_id, True)
 
     # Atualizando o ticket de estacionamento
-    last_parked_ticket = crud.get_last_parked_ticket_from_vehicle(db, vehicle_id)
+    last_parked_ticket = crud.get_last_parking_ticket_from_vehicle(db, vehicle_id)
     crud.update_end_time_parking_ticket(db, last_parked_ticket.parking_ticket_id)
 
     return Response(status_code=204)

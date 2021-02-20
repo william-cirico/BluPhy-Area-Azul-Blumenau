@@ -1,3 +1,7 @@
+"""
+Módulo responsável por obter as configurações do arquivo .env
+"""
+
 from pydantic import BaseSettings
 
 

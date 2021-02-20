@@ -1,3 +1,9 @@
+"""
+Dependências utilizadas nas Path Operation Functions.
+São as funções executadas antes das Path Operation Functions e servem para
+obter paramêtros ou fazer validações.
+"""
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from sqlalchemy.orm import Session
@@ -20,14 +26,8 @@ oauth2_scheme = OAuth2PasswordBearer(
     }
 )
 
-
-ACCESS_TOKEN = 'bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJibHVwaHlzaXN0ZW1hc0BnbWFpbC' \
-               '5jb20iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNjEzMDc0NjUyLCJqdGkiOiJ0UWltT2J4SVdEWnpPZ1MzZ' \
-               'DlybDItR3c3QVkiLCJjbGllbnRfaWQiOiJ5MzIwMUVvZGRQRVJ5bkZjIn0.VX_evzYeMZ_q2ZO60LUN0Oqj' \
-               'lceHas1qvEBhDCCB_9jt_CL2FFWRo_exIdjhG0NwSqZShfnRk-5XVAwyM4OIQ_1mUPTXtsmGMVevEiUz4YW' \
-               'c6j0_7RpmQGjxSndpey7L_kyh_HQDj1EEo-kH6DXZAJ_kYntQjM0WIZ9Cm-X5qPkWBiIqjOqFcmX4vBcpm5' \
-               'mYcS0tgDHeVsNEocvlNLzFRkCuWu99PH16hg6lKsZ5SlqRhwcrIHfLeFvxImUk0Aq06fnfVFfolxNdGsgcX' \
-               'LilhAba3mSvF1huoJyxb0lQlSe0bBMg786RmLqlSHiWlBkDbVkEaiFHaGaXcJdDo7SvUA'
+# Token utilizado pela JunoAPI.
+ACCESS_TOKEN = None
 
 
 def is_access_token_valid():
@@ -69,6 +69,9 @@ def get_access_token():
 
 
 def get_db():
+    """
+    Retorna uma session do banco de dados.
+    """
     db = SessionLocal()
     try:
         yield db
@@ -81,6 +84,14 @@ def get_current_user(
         token: str = Depends(oauth2_scheme),
         db: Session = Depends(get_db)
 ):
+    """
+    Retorna o usuário atual (logado).
+
+    Args:
+        security_scopes: Escopos de segurança (user, traffic_warden ou admin).
+        token: Token JWT de autenticação.
+        db: Sessão do banco.
+    """
     roles_dict = {
         'user': get_user_by_email,
         'traffic_warden': get_traffic_warden_by_email,
@@ -108,6 +119,14 @@ def get_current_user(
     except JWTError:
         raise credentials_exception
 
+    for scope in security_scopes.scopes:
+        if scope not in token_data.scopes:
+            raise HTTPException(
+                status_code=401,
+                detail="Sem permissões suficientes",
+                headers={"WWW-Authenticate": authenticate_value}
+            )
+
     current_user = None
 
     for role, get_function in roles_dict.items():
@@ -117,14 +136,6 @@ def get_current_user(
 
     if current_user is None:
         raise credentials_exception
-
-    for scope in security_scopes.scopes:
-        if scope not in token_data.scopes:
-            raise HTTPException(
-                status_code=401,
-                detail="Sem permissões suficientes",
-                headers={"WWW-Authenticate": authenticate_value}
-            )
 
     return current_user
 

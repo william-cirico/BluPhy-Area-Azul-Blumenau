@@ -1,4 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Time, DateTime, Enum
+"""
+Módulo responsável pelos modelos (Tabelas) do banco de dados.
+"""
+
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime
 from sqlalchemy.orm import relationship
 
 from .database import Base

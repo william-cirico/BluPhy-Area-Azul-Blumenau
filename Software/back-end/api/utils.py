@@ -1,17 +1,47 @@
+"""
+Funções utilitárias.
+"""
+
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Compara a senha recebida com a senha com hash.
+
+    Args:
+        plain_password: Senha sem hash.
+        hashed_password: Senha com hash.
+    Returns:
+        True, se as senhas forem iguais, caso contrário,
+        retorna False.
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password):
+def get_password_hash(password: str) -> str:
+    """
+    Gera um Hash da senha recebida.
+
+    Args:
+        password: Senha limpa.
+    Returns:
+        A senha criptografada.
+    """
     return pwd_context.hash(password)
 
 
-def document_validator(document:str) -> bool:
+def document_validator(document: str) -> bool:
+    """
+    Valida o documento recebido (CPF ou CNPJ).
+
+    Args:
+        document: CPF ou CNPJ (Sujo).
+    Returns:
+        True se o documento for válido, caso contrário, retorna False.
+    """
     document = clean_document(document)
     response = False
     compare = document[1] * len(document)  
@@ -81,7 +111,16 @@ def document_validator(document:str) -> bool:
          
     return response
 
-def clean_document(document:str) -> str:
+
+def clean_document(document: str) -> str:
+    """
+    Limpa o documento.
+
+    Args:
+        document: CPF ou CNPJ (Sujo).
+    Returns:
+        O documento limpo (Sem caracteres especiais).
+    """
     char = [".", "-", "/"]
     for i in char:
         document = document.replace(i, "")
