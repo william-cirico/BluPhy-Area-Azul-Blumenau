@@ -210,8 +210,7 @@ def update_user(db: Session, user: schemas.UserUpdate, user_id) -> None:
     db.query(models.User)\
         .filter(models.User.user_id == user_id)\
         .update({
-            models.User.name: user.name,
-            models.User.email: user.email,
+            models.User.name: user.name,            
             models.User.document: user.document,
         })
     db.commit()

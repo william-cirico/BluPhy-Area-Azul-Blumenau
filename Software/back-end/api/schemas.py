@@ -62,8 +62,9 @@ class UserCreate(UserBase):
     password: str    
 
 
-class UserUpdate(UserBase):
-    pass
+class UserUpdate(BaseModel):
+    name: str
+    document: str
 
 
 class User(UserBase):

@@ -169,8 +169,7 @@ async def update_user(
     """
     Atualiza os seguintes dados do usuário:
 
-    - **name**: Nome do usuário.
-    - **email**: Email do usuário.
+    - **name**: Nome do usuário.    
     - **document**: Documento do usuário (CPF ou CNPJ).
     """
     if not document_validator(user.document):
