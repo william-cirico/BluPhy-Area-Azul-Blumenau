@@ -1,7 +1,6 @@
 import React, { useContext, useReducer, useEffect, useState } from 'react';
 import { 
-    KeyboardAvoidingView, 
-    Image, 
+    KeyboardAvoidingView,     
     StyleSheet, 
     Text, 
     View,
@@ -14,6 +13,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import commonStyles from '../theme/commonStyles';
 import { emailRegex } from '../utils/regExp';
+import Loading from '../components/Loading';
 
 export default () => {
     const { authContext } = useContext(AuthContext);
@@ -96,9 +96,12 @@ export default () => {
         keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', keyboardDidHide);
     }, []);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     
     return (
-        <View style={styles.background} behavior='height'>
+        <View style={styles.background}>
+            <Loading isVisible={isLoading} />
             <View style={styles.containerLogo}>
                 <Animated.Image
                     style={{
@@ -129,7 +132,9 @@ export default () => {
                     validForm={validForm} 
                     disabled={!validForm}
                     onPress={() => {
+                        setIsLoading(true);
                         authContext.signIn({username: state.email, password: state.password}); 
+                        setIsLoading(false);
                     }}
                 />
             </KeyboardAvoidingView>

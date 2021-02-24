@@ -43,8 +43,7 @@ export default ({ children }) => {
         }            
     };
 
-    const checkPayments = async () => { 
-        console.log('cron');         
+    const checkPayments = async () => {      
         try {            
             res = await axios(`${server}/recharges/`)
             loadUser();                        

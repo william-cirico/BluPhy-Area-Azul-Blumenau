@@ -4,11 +4,12 @@ import { StyleSheet, Text, View  } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Timer from '../components/Timer';
+import Button from '../components/Button';
 
 import commonStyles from '../theme/commonStyles';
 
 
-export default ({navigation, route}) => {  
+export default ({navigation, route}) => {      
     return (
         <View style={styles.container}>
             <View style={styles.containerInformation}>
@@ -49,6 +50,10 @@ export default ({navigation, route}) => {
                         </View>
                     </View>
                 </View>
+                <Button 
+                    title='Localização'
+                    onPress={() => navigation.navigate('MapScreen', {location: route.params.locationObject})}
+                />
             </View>                     
         </View>
     );

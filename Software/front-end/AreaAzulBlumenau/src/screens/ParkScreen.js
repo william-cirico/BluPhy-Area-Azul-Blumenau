@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { 
     ActivityIndicator,
     Dimensions, 
@@ -20,6 +20,7 @@ import commonStyles from '../theme/commonStyles';
 import Button from '../components/Button';
 import { VehicleContext } from '../contexts/VehicleContext';
 import { UserContext } from '../contexts/UserContext';
+import LoadingModal from '../components/LoadingModal';
 
 export default ({ navigation, route }) => {
     const reducer = (prevState, action) => {
@@ -89,8 +90,10 @@ export default ({ navigation, route }) => {
 
     const { loadVehicles } = useContext(VehicleContext);
     const { loadUser } = useContext(UserContext);
+    const [isLoading, setIsLoading] = useState(false);
 
     const confirmParking = async () => {
+        setIsLoading(true);
         try {
             const location = `${state.markerPosition.latitude} ${state.markerPosition.longitude}`
             await axios.post(
@@ -112,6 +115,7 @@ export default ({ navigation, route }) => {
         } catch(e) {            
             showErrorMessage(e);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {            
@@ -132,6 +136,7 @@ export default ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
+            <LoadingModal isVisible={isLoading} />
             <View style={styles.mapContainer}>                
                 <MapView
                     provider={PROVIDER_GOOGLE}                
@@ -140,8 +145,7 @@ export default ({ navigation, route }) => {
                 >
                     <Marker
                         draggable
-                        coordinate={state.markerPosition}
-                        onDragEnd={(e) => console.log(e.nativeEvent.coordinate)}                
+                        coordinate={state.markerPosition}                                        
                     />
                 </MapView>                
             </View>

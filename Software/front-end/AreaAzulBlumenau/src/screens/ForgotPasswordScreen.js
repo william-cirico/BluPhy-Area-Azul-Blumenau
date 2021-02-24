@@ -106,8 +106,7 @@ export default ({ navigation }) => {
     };
 
     const checkCode = async () => {
-        try { 
-            console.log(state.verificationCode)
+        try {             
             await axios.post(
                 `${server}/users/check-verification-code/${state.email}`,
                 { verification_code: state.code }

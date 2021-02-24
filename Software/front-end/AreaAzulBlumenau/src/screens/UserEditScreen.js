@@ -9,7 +9,7 @@ import LoadingModal from '../components/LoadingModal';
 import commonStyles from '../theme/commonStyles';
 import { UserContext } from '../contexts/UserContext';
 import { server, showErrorMessage } from '../utils/common';
-import { emailRegex, cpfCnpjRegex } from '../utils/regExp';
+import { cpfCnpjRegex } from '../utils/regExp';
 
 export default ({ navigation, route }) => {
     const reducer = (prevState, action) => {
@@ -27,21 +27,7 @@ export default ({ navigation, route }) => {
                         name: action.name,
                         isNameValid: false,
                     }
-                }
-            case 'EMAIL':
-                if (emailRegex.test(action.email)) {
-                    return {
-                        ...prevState,
-                        email: action.email,
-                        isEmailValid: true,
-                    }                
-                } else {
-                    return {
-                        ...prevState,
-                        email: action.email,
-                        isEmailValid: false,
-                    }
-                }
+                }            
             case 'DOCUMENT':
                 if (cpfCnpjRegex.test(action.document)) {
                     return {
@@ -89,12 +75,11 @@ export default ({ navigation, route }) => {
             await axios.put(
                 `${server}/users/`,
                 {
-                    name: state.name,                    
-                    email: state.email,
+                    name: state.name,                                        
                     document: state.document,
                 }
             );
-
+            
             loadUser();
 
             Alert.alert(
@@ -105,12 +90,11 @@ export default ({ navigation, route }) => {
                     onPress: () => navigation.push('MainScreen')
                 }]
             );                          
-        } catch(e) {       
-            console.log(e);     
+        } catch(e) {                    
             showErrorMessage(e);
         }
         setLoading(false);
-    };
+    };    
 
     return (
         <KeyboardAvoidingView 
@@ -123,14 +107,7 @@ export default ({ navigation, route }) => {
                 onChangeText={text => dispatch({ type: 'NAME', name: text })} 
                 placeholder='Nome'    
                 value={state.name}            
-            />
-            <Input
-                isValid={state.isEmailValid}
-                onChangeText={text => dispatch({ type: 'EMAIL', email: text })} 
-                placeholder='E-mail'
-                keyboardType='email-address'                
-                value={state.email}
-            />  
+            />            
             <Input
                 isValid={state.isDocumentValid}
                 onChangeText={text => dispatch({ type: 'DOCUMENT', document: text })} 

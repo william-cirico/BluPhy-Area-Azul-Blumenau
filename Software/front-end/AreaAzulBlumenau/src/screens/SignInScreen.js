@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from 'react';
+import React, { useContext, useReducer, useState } from 'react';
 import { Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Button from '../components/Button';
@@ -7,6 +7,7 @@ import commonStyles from '../theme/commonStyles';
 import Logo from '../assets/logo.png';
 import { emailRegex } from '../utils/regExp';
 import { AuthContext } from '../contexts/AuthContext';
+import LoadingModal from '../components/LoadingModal';
 
 
 export default ({ navigation }) => {
@@ -59,6 +60,8 @@ export default ({ navigation }) => {
         state.isPasswordValid,
     ];
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const validForm = validations.reduce((acc, cv) => acc && cv)
 
     return (
@@ -66,6 +69,7 @@ export default ({ navigation }) => {
             style={styles.container}
             behavior='padding'
         >    
+            <LoadingModal isVisible={isLoading} />
             <View style={styles.containerView}>
                 <View style={styles.logoContainer}>
                     <Image 
@@ -88,24 +92,26 @@ export default ({ navigation }) => {
                         onChangeText={text => dispatch({ type: 'PASSWORD', password: text })}
                         secureTextEntry={true}
                     />
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={() => {
                             navigation.navigate('ForgotPasswordScreen')
                         }}
                     >
                         <Text style={[styles.text, {fontWeight: 'bold'}]}>Esqueceu a senha?</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <Button 
                         title='Login' 
                         validForm={validForm} 
                         disabled={!validForm}
                         onPress={() => {
+                            setIsLoading(true);
                             authContext.signIn({username: state.email, password: state.password}); 
+                            setIsLoading(false);
                         }}                    
                     />
                     <TouchableOpacity style={styles.register}
                         onPress={() => {
-                            navigation.navigate('SignUpScreen');
+                            navigation.push('SignUpScreen');
                         }}
                         activeOpacity={0.7}
                     >

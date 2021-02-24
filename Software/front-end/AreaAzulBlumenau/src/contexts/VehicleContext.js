@@ -68,7 +68,7 @@ export default ({ children }) => {
 
     const updateVehicle = async (vehicleId, licensePlate, model, vehicleType) => {        
         try {
-            const res = await axios.put(
+            await axios.put(
                 `${server}/vehicles/${vehicleId}`,
                 {
                     license_plate: licensePlate,

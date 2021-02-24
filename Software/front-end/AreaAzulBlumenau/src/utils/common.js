@@ -1,4 +1,4 @@
-import { Alert, Platform } from 'react-native'
+import { Alert } from 'react-native'
 
 const server = 'http://15.228.15.40:8080';
 // const server = 'http://10.0.2.2:8000';

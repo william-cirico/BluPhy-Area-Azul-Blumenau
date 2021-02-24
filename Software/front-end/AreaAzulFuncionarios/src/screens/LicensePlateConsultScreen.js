@@ -46,8 +46,13 @@ export default ({ navigation }) => {
         setLoading(true);
         try {
             res = await axios(`${server}/vehicles/${state.licensePlate}`);
-            const { license_plate, model, vehicle_type, end_time } = res.data;
-            navigation.navigate('VehicleInformationScreen', {license_plate, model, vehicle_type, end_time})
+            const { license_plate, model, vehicle_type, end_time, location } = res.data;            
+            const locationObject = {
+                latitude: Number(location.split(' ')[0]),
+                longitude: Number(location.split(' ')[1]),
+            }
+            
+            navigation.navigate('VehicleInformationScreen', {license_plate, model, vehicle_type, end_time, locationObject})
         } catch(e) {
             showErrorMessage(e);
         }
